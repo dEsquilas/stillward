@@ -5,9 +5,6 @@ defineProps({
     canLogin: {
         type: Boolean,
     },
-    canRegister: {
-        type: Boolean,
-    },
 });
 </script>
 
@@ -24,7 +21,7 @@ defineProps({
                 Track your new year's resolutions and achieve your goals.
             </p>
 
-            <div v-if="canLogin" class="flex flex-col sm:flex-row gap-4 justify-center">
+            <div v-if="canLogin">
                 <Link
                     v-if="$page.props.auth.user"
                     :href="route('dashboard')"
@@ -33,22 +30,13 @@ defineProps({
                     Go to Dashboard
                 </Link>
 
-                <template v-else>
-                    <Link
-                        :href="route('login')"
-                        class="px-8 py-3 bg-white text-gray-900 font-semibold rounded-lg hover:bg-gray-100 transition"
-                    >
-                        Log in
-                    </Link>
-
-                    <Link
-                        v-if="canRegister"
-                        :href="route('register')"
-                        class="px-8 py-3 border border-white text-white font-semibold rounded-lg hover:bg-white/10 transition"
-                    >
-                        Register
-                    </Link>
-                </template>
+                <Link
+                    v-else
+                    :href="route('login')"
+                    class="px-8 py-3 bg-white text-gray-900 font-semibold rounded-lg hover:bg-gray-100 transition"
+                >
+                    Get Started
+                </Link>
             </div>
         </div>
 
