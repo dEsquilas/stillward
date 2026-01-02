@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <!-- Outer circle (progress ring) -->
+  <circle cx="32" cy="32" r="28" stroke="#374151" stroke-width="4" fill="none"/>
+
+  <!-- Progress arc (representing ~75% progress) -->
+  <path
+    d="M32 4 A28 28 0 1 1 8.2 48"
+    stroke="url(#gradient)"
+    stroke-width="4"
+    stroke-linecap="round"
+    fill="none"
+  />
+
+  <!-- Upward arrow / checkmark hybrid -->
+  <path
+    d="M22 32 L29 39 L42 24"
+    stroke="#10B981"
+    stroke-width="4"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    fill="none"
+  />
+
+  <defs>
+    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#8B5CF6"/>
+      <stop offset="50%" stop-color="#EC4899"/>
+      <stop offset="100%" stop-color="#F59E0B"/>
+    </linearGradient>
+  </defs>
+</svg>
