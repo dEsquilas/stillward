@@ -67,6 +67,11 @@ class GoalController extends Controller
 
         return Inertia::render('Goals/Show', [
             'goal' => $goal,
+            'categories' => collect(GoalCategory::cases())->map(fn ($c) => [
+                'value' => $c->value,
+                'label' => $c->label(),
+                'color' => $c->color(),
+            ]),
         ]);
     }
 
