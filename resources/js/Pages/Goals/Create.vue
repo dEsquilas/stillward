@@ -18,6 +18,7 @@ const form = useForm({
     target_value: '',
     initial_value: '',
     unit: '',
+    increment: 1,
     currency: 'EUR',
 });
 
@@ -178,40 +179,60 @@ const typeIcons = {
 
                     <!-- Counter type fields -->
                     <div v-if="form.type === 'counter'" class="space-y-3">
-                        <div class="grid grid-cols-2 gap-3">
+                        <div class="grid grid-cols-3 gap-3">
                             <div>
-                                <label for="initial_counter" class="block text-sm font-medium text-gray-400 mb-2">
+                                <label
+                                    for="initial_counter"
+                                    class="block text-sm font-medium text-gray-400 mb-2"
+                                >
                                     {{ $t('form.initial') }}
-                                    <span class="text-gray-600">({{ $t('form.optional') }})</span>
                                 </label>
                                 <input
                                     id="initial_counter"
                                     v-model="form.initial_value"
                                     type="number"
-                                    min="0"
                                     step="any"
                                     placeholder="0"
                                     class="w-full px-4 py-3 rounded-xl bg-gray-900 border border-gray-800 text-white placeholder-gray-600 focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-colors"
                                 />
                             </div>
                             <div>
-                                <label for="target_counter" class="block text-sm font-medium text-gray-400 mb-2"
+                                <label
+                                    for="target_counter"
+                                    class="block text-sm font-medium text-gray-400 mb-2"
                                     >{{ $t('form.target') }}</label
                                 >
                                 <input
                                     id="target_counter"
                                     v-model="form.target_value"
                                     type="number"
-                                    min="0"
+                                    step="any"
+                                    class="w-full px-4 py-3 rounded-xl bg-gray-900 border border-gray-800 text-white placeholder-gray-600 focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-colors"
+                                />
+                            </div>
+                            <div>
+                                <label
+                                    for="increment"
+                                    class="block text-sm font-medium text-gray-400 mb-2"
+                                    >{{ $t('form.increment') }}</label
+                                >
+                                <input
+                                    id="increment"
+                                    v-model="form.increment"
+                                    type="number"
                                     step="any"
                                     class="w-full px-4 py-3 rounded-xl bg-gray-900 border border-gray-800 text-white placeholder-gray-600 focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-colors"
                                 />
                             </div>
                         </div>
+                        <p class="text-xs text-gray-500">
+                            {{ $t('form.increment_hint') }}
+                        </p>
                         <div>
-                            <label for="unit" class="block text-sm font-medium text-gray-400 mb-2">{{
-                                $t('form.unit')
-                            }}</label>
+                            <label for="unit" class="block text-sm font-medium text-gray-400 mb-2">
+                                {{ $t('form.unit') }}
+                                <span class="text-gray-600">({{ $t('form.optional') }})</span>
+                            </label>
                             <input
                                 id="unit"
                                 v-model="form.unit"
