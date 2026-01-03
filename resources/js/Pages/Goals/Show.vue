@@ -214,22 +214,29 @@ const formatDate = (dateString) => {
 
                     <!-- Counter Type -->
                     <div v-if="goal.type === 'counter'" class="space-y-3">
+                        <!-- Quick increment/decrement buttons -->
                         <div class="flex gap-2">
                             <button
-                                @click="logProgress(-1)"
+                                @click="logProgress(-(goal.increment || 1))"
                                 :disabled="logForm.processing"
                                 class="flex-1 py-3 rounded-xl bg-gray-800 text-white font-medium hover:bg-gray-700 transition-colors disabled:opacity-50"
                             >
-                                -1
+                                {{ (goal.increment || 1) >= 0 ? `-${goal.increment || 1}` : `+${Math.abs(goal.increment)}` }}
                             </button>
                             <button
-                                @click="logProgress(1)"
+                                @click="logProgress(goal.increment || 1)"
                                 :disabled="logForm.processing"
                                 class="flex-1 py-3 rounded-xl bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white font-medium shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 transition-all disabled:opacity-50"
                             >
-                                +1
+                                {{ (goal.increment || 1) >= 0 ? `+${goal.increment || 1}` : `${goal.increment}` }}
                             </button>
                         </div>
+                        <!-- Progress info -->
+                        <div class="flex justify-between text-xs text-gray-600">
+                            <span>{{ $t('form.initial') }}: {{ goal.initial_value || 0 }}</span>
+                            <span>{{ $t('form.target') }}: {{ goal.target_value }}</span>
+                        </div>
+                        <!-- Custom value input -->
                         <div class="flex gap-2">
                             <input
                                 v-model="customValue"
