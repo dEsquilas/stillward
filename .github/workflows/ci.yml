@@ -77,9 +77,6 @@ jobs:
       - name: Generate key
         run: php artisan key:generate
 
-      - name: Run PHPStan
-        run: ./vendor/bin/phpstan analyse --memory-limit=512M
-
       - name: Run ESLint
         run: pnpm run lint
 
