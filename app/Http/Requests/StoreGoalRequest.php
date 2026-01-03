@@ -24,6 +24,7 @@ class StoreGoalRequest extends FormRequest
             'target_value' => ['nullable', 'numeric'],
             'initial_value' => ['nullable', 'numeric'],
             'unit' => ['nullable', 'string', 'max:50'],
+            'increment' => ['nullable', 'numeric'],
             'currency' => ['nullable', 'string', 'size:3'],
         ];
     }
