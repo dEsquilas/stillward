@@ -56,12 +56,12 @@ class Goal extends Model
     public function getProgressAttribute(): float
     {
         return match ($this->type) {
-            GoalType::Counter, GoalType::Money => $this->target_value > 0
+            GoalType::Counter, GoalType::Number => $this->calculateNumberProgress(),
+            GoalType::Money => $this->target_value > 0
                 ? min(100, ($this->current_value / $this->target_value) * 100)
                 : 0,
             GoalType::YesNo => $this->is_completed ? 100 : 0,
             GoalType::Percentage => (float) $this->current_value,
-            GoalType::Number => $this->calculateNumberProgress(),
         };
     }
 

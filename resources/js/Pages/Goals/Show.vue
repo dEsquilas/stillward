@@ -18,7 +18,7 @@ const category = computed(
 const progress = computed(() => {
     if (props.goal.type === 'yes_no') return props.goal.is_completed ? 100 : 0;
     if (props.goal.type === 'percentage') return parseFloat(props.goal.current_value) || 0;
-    if (props.goal.type === 'number') {
+    if (props.goal.type === 'number' || props.goal.type === 'counter') {
         const initial = parseFloat(props.goal.initial_value) || 0;
         const target = parseFloat(props.goal.target_value) || 0;
         const current = parseFloat(props.goal.current_value) || 0;

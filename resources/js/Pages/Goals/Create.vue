@@ -176,11 +176,54 @@ const typeIcons = {
                         ></textarea>
                     </div>
 
-                    <!-- Target (for counter/money) -->
-                    <div
-                        v-if="form.type === 'counter' || form.type === 'money'"
-                        class="grid grid-cols-2 gap-3"
-                    >
+                    <!-- Counter type fields -->
+                    <div v-if="form.type === 'counter'" class="space-y-3">
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label for="initial_counter" class="block text-sm font-medium text-gray-400 mb-2">
+                                    {{ $t('form.initial') }}
+                                    <span class="text-gray-600">({{ $t('form.optional') }})</span>
+                                </label>
+                                <input
+                                    id="initial_counter"
+                                    v-model="form.initial_value"
+                                    type="number"
+                                    min="0"
+                                    step="any"
+                                    placeholder="0"
+                                    class="w-full px-4 py-3 rounded-xl bg-gray-900 border border-gray-800 text-white placeholder-gray-600 focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-colors"
+                                />
+                            </div>
+                            <div>
+                                <label for="target_counter" class="block text-sm font-medium text-gray-400 mb-2"
+                                    >{{ $t('form.target') }}</label
+                                >
+                                <input
+                                    id="target_counter"
+                                    v-model="form.target_value"
+                                    type="number"
+                                    min="0"
+                                    step="any"
+                                    class="w-full px-4 py-3 rounded-xl bg-gray-900 border border-gray-800 text-white placeholder-gray-600 focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-colors"
+                                />
+                            </div>
+                        </div>
+                        <div>
+                            <label for="unit" class="block text-sm font-medium text-gray-400 mb-2">{{
+                                $t('form.unit')
+                            }}</label>
+                            <input
+                                id="unit"
+                                v-model="form.unit"
+                                type="text"
+                                :placeholder="$t('form.unit_placeholder')"
+                                class="w-full px-4 py-3 rounded-xl bg-gray-900 border border-gray-800 text-white placeholder-gray-600 focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-colors"
+                            />
+                        </div>
+                    </div>
+
+                    <!-- Money type fields -->
+                    <div v-if="form.type === 'money'" class="grid grid-cols-2 gap-3">
                         <div>
                             <label for="target" class="block text-sm font-medium text-gray-400 mb-2"
                                 >{{ $t('form.target') }}</label
@@ -194,19 +237,7 @@ const typeIcons = {
                                 class="w-full px-4 py-3 rounded-xl bg-gray-900 border border-gray-800 text-white placeholder-gray-600 focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-colors"
                             />
                         </div>
-                        <div v-if="form.type === 'counter'">
-                            <label for="unit" class="block text-sm font-medium text-gray-400 mb-2">{{
-                                $t('form.unit')
-                            }}</label>
-                            <input
-                                id="unit"
-                                v-model="form.unit"
-                                type="text"
-                                :placeholder="$t('form.unit_placeholder')"
-                                class="w-full px-4 py-3 rounded-xl bg-gray-900 border border-gray-800 text-white placeholder-gray-600 focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-colors"
-                            />
-                        </div>
-                        <div v-if="form.type === 'money'">
+                        <div>
                             <label
                                 for="currency"
                                 class="block text-sm font-medium text-gray-400 mb-2"

@@ -37,6 +37,7 @@ class GoalTest extends TestCase
         $goal = Goal::factory()->create([
             'type' => GoalType::Counter,
             'target_value' => 100,
+            'initial_value' => 0,
             'current_value' => 50,
         ]);
 
@@ -48,6 +49,7 @@ class GoalTest extends TestCase
         $goal = Goal::factory()->create([
             'type' => GoalType::Counter,
             'target_value' => 100,
+            'initial_value' => 0,
             'current_value' => 150,
         ]);
 
@@ -59,10 +61,24 @@ class GoalTest extends TestCase
         $goal = Goal::factory()->create([
             'type' => GoalType::Counter,
             'target_value' => 0,
+            'initial_value' => 0,
             'current_value' => 50,
         ]);
 
         $this->assertEquals(0.0, $goal->progress);
+    }
+
+    public function test_counter_goal_progress_with_initial_value(): void
+    {
+        $goal = Goal::factory()->create([
+            'type' => GoalType::Counter,
+            'target_value' => 100,
+            'initial_value' => 20,
+            'current_value' => 60,
+        ]);
+
+        // Progress: (60 - 20) / (100 - 20) = 40/80 = 50%
+        $this->assertEquals(50.0, $goal->progress);
     }
 
     public function test_money_goal_progress_calculation(): void

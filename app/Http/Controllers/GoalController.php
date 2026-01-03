@@ -56,8 +56,8 @@ class GoalController extends Controller
     {
         $data = $request->validated();
 
-        // For Number type, set current_value to initial_value
-        if ($data['type'] === GoalType::Number->value && isset($data['initial_value'])) {
+        // For Counter and Number types, set current_value to initial_value if provided
+        if (in_array($data['type'], [GoalType::Counter->value, GoalType::Number->value]) && isset($data['initial_value'])) {
             $data['current_value'] = $data['initial_value'];
         }
 
