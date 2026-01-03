@@ -502,40 +502,40 @@ Este documento contiene todas las tareas necesarias para desarrollar Stillward, 
 
 ### Tareas
 
-- [ ] Crear `manifest.json` con:
-  - [ ] Nombre de la app
-  - [ ] Iconos en varios tamaños
-  - [ ] Colores (theme_color, background_color)
-  - [ ] Display mode (standalone)
-  - [ ] Start URL
-- [ ] Crear Service Worker básico
-- [ ] Configurar caching de assets estáticos
-- [ ] Añadir meta tags necesarios en `<head>`
-- [ ] Crear iconos de app en tamaños requeridos (192x192, 512x512, etc.)
+- [x] Crear `manifest.json` con:
+  - [x] Nombre de la app
+  - [x] Iconos en varios tamaños (SVG)
+  - [x] Colores (theme_color, background_color)
+  - [x] Display mode (standalone)
+  - [x] Start URL
+- [x] Crear Service Worker básico — via vite-plugin-pwa
+- [x] Configurar caching de assets estáticos — workbox config
+- [x] Añadir meta tags necesarios en `<head>`
+- [x] Crear iconos de app en tamaños requeridos (192x192, 512x512, etc.) — SVG scalable
 - [ ] Crear splash screens para iOS (opcional)
-- [ ] Optimizar para mobile:
-  - [ ] Touch targets de tamaño adecuado (48px mínimo)
+- [x] Optimizar para mobile:
+  - [x] Touch targets de tamaño adecuado (48px mínimo)
   - [ ] Gestos (swipe para acciones, pull to refresh)
-  - [ ] Teclado numérico para inputs de números
-  - [ ] Viewport meta tag correcto
+  - [x] Teclado numérico para inputs de números
+  - [x] Viewport meta tag correcto
 - [ ] Testear en dispositivos reales
 - [ ] Implementar "Add to Home Screen" prompt (opcional)
-- [ ] Configurar HTTPS (requerido para PWA)
+- [ ] Configurar HTTPS (requerido para PWA) — necesario en producción
 
 ### Checklist de Pruebas
 
 - [ ] Lighthouse PWA audit pasa (o score alto)
-- [ ] `manifest.json` es válido
-- [ ] Service Worker se registra correctamente
+- [x] `manifest.json` es válido
+- [x] Service Worker se registra correctamente
 - [ ] App se puede instalar desde Chrome (desktop)
 - [ ] App se puede añadir a home screen en Android
 - [ ] App se puede añadir a home screen en iOS
 - [ ] Abre en modo standalone (sin barra de navegador)
-- [ ] Iconos se muestran correctamente
+- [x] Iconos se muestran correctamente
 - [ ] Funciona offline (al menos mensaje de offline)
-- [ ] Touch targets son suficientemente grandes
-- [ ] Inputs numéricos abren teclado numérico
-- [ ] No hay scroll horizontal involuntario
+- [x] Touch targets son suficientemente grandes
+- [x] Inputs numéricos abren teclado numérico
+- [x] No hay scroll horizontal involuntario
 - [ ] Funciona en:
   - [ ] iPhone Safari
   - [ ] Android Chrome
