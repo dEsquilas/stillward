@@ -66,7 +66,7 @@ jobs:
         run: composer install --prefer-dist --no-interaction --no-progress
 
       - name: Install Node dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install
 
       - name: Build assets
         run: pnpm run build
