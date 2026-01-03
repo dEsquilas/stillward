@@ -62,6 +62,7 @@ export default {
         optional: 'opcional',
         description_placeholder: 'Añade detalles...',
         target: 'Objetivo',
+        initial: 'Valor inicial',
         unit: 'Unidad',
         unit_placeholder: 'libros, km...',
         currency: 'Moneda',
@@ -78,6 +79,7 @@ export default {
         yes_no: 'Sí/No',
         percentage: 'Porcentaje',
         money: 'Dinero',
+        number: 'Número',
     },
 
     // Categories
@@ -96,9 +98,11 @@ export default {
         mark_complete: 'Marcar como completada',
         completed: 'Completada',
         custom_value: 'Valor personalizado',
+        current_value: 'Valor actual',
         amount: 'Cantidad',
         add: 'Añadir',
         subtract: 'Restar',
+        update: 'Actualizar',
         archive: 'Archivar',
         restore: 'Restaurar',
         delete: 'Eliminar',

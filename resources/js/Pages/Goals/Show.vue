@@ -18,6 +18,14 @@ const category = computed(
 const progress = computed(() => {
     if (props.goal.type === 'yes_no') return props.goal.is_completed ? 100 : 0;
     if (props.goal.type === 'percentage') return parseFloat(props.goal.current_value) || 0;
+    if (props.goal.type === 'number') {
+        const initial = parseFloat(props.goal.initial_value) || 0;
+        const target = parseFloat(props.goal.target_value) || 0;
+        const current = parseFloat(props.goal.current_value) || 0;
+        const range = target - initial;
+        if (range === 0) return current === target ? 100 : 0;
+        return Math.min(100, Math.max(0, ((current - initial) / range) * 100));
+    }
     if (props.goal.target_value > 0)
         return Math.min(100, (props.goal.current_value / props.goal.target_value) * 100);
     return 0;
@@ -29,6 +37,8 @@ const progressText = computed(() => {
     if (props.goal.type === 'percentage') return `${props.goal.current_value}%`;
     if (props.goal.type === 'money')
         return `${props.goal.currency} ${props.goal.current_value} / ${props.goal.target_value}`;
+    if (props.goal.type === 'number')
+        return `${props.goal.current_value} / ${props.goal.target_value} ${props.goal.unit || ''}`;
     return `${props.goal.current_value} / ${props.goal.target_value} ${props.goal.unit || ''}`;
 });
 
@@ -42,6 +52,7 @@ const logForm = useForm({
 
 const customValue = ref('');
 const percentageValue = ref(parseFloat(props.goal.current_value) || 0);
+const numberValue = ref(parseFloat(props.goal.current_value) || 0);
 
 const logProgress = (value) => {
     logForm.value = value;
@@ -66,6 +77,10 @@ const toggleComplete = () => {
 
 const updatePercentage = () => {
     logProgress(percentageValue.value);
+};
+
+const updateNumber = () => {
+    logProgress(numberValue.value);
 };
 
 const archive = () => {
@@ -326,6 +341,33 @@ const formatDate = (dateString) => {
                                 + {{ $t('detail.add') }}
                             </button>
                         </div>
+                    </div>
+
+                    <!-- Number Type -->
+                    <div v-else-if="goal.type === 'number'" class="space-y-4">
+                        <div>
+                            <label class="block text-sm text-gray-500 mb-2">
+                                {{ $t('detail.current_value') }}
+                                <span v-if="goal.unit" class="text-gray-600">({{ goal.unit }})</span>
+                            </label>
+                            <input
+                                v-model="numberValue"
+                                type="number"
+                                step="any"
+                                class="w-full px-4 py-3 rounded-xl bg-gray-800 border border-gray-700 text-white text-lg font-medium text-center focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+                            />
+                            <div class="flex justify-between text-xs text-gray-600 mt-2">
+                                <span>{{ $t('form.initial') }}: {{ goal.initial_value }}</span>
+                                <span>{{ $t('form.target') }}: {{ goal.target_value }}</span>
+                            </div>
+                        </div>
+                        <button
+                            @click="updateNumber"
+                            :disabled="logForm.processing"
+                            class="w-full py-3 rounded-xl bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white font-medium shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 transition-all disabled:opacity-50"
+                        >
+                            {{ $t('detail.update') }}
+                        </button>
                     </div>
                 </div>
 

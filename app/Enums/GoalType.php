@@ -8,6 +8,7 @@ enum GoalType: string
     case YesNo = 'yes_no';
     case Percentage = 'percentage';
     case Money = 'money';
+    case Number = 'number';
 
     public function label(): string
     {
@@ -16,6 +17,7 @@ enum GoalType: string
             self::YesNo => 'Yes/No',
             self::Percentage => 'Percentage',
             self::Money => 'Money',
+            self::Number => 'Number',
         };
     }
 }

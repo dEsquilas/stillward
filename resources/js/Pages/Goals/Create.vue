@@ -16,6 +16,7 @@ const form = useForm({
     title: '',
     description: '',
     target_value: '',
+    initial_value: '',
     unit: '',
     currency: 'EUR',
 });
@@ -29,6 +30,7 @@ const typeIcons = {
     yes_no: 'M5 13l4 4L19 7',
     percentage: 'M16 8v8m-4-5v5m-4-2v2',
     money: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8V7m0 1v8m0 0v1',
+    number: 'M7 20l4-16m2 16l4-16M6 9h14M4 15h14',
 };
 </script>
 
@@ -219,6 +221,53 @@ const typeIcons = {
                                 <option value="USD">USD</option>
                                 <option value="GBP">GBP</option>
                             </select>
+                        </div>
+                    </div>
+
+                    <!-- Number type fields -->
+                    <div v-if="form.type === 'number'" class="space-y-3">
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label
+                                    for="initial"
+                                    class="block text-sm font-medium text-gray-400 mb-2"
+                                    >{{ $t('form.initial') }}</label
+                                >
+                                <input
+                                    id="initial"
+                                    v-model="form.initial_value"
+                                    type="number"
+                                    step="any"
+                                    class="w-full px-4 py-3 rounded-xl bg-gray-900 border border-gray-800 text-white placeholder-gray-600 focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-colors"
+                                />
+                            </div>
+                            <div>
+                                <label
+                                    for="target_number"
+                                    class="block text-sm font-medium text-gray-400 mb-2"
+                                    >{{ $t('form.target') }}</label
+                                >
+                                <input
+                                    id="target_number"
+                                    v-model="form.target_value"
+                                    type="number"
+                                    step="any"
+                                    class="w-full px-4 py-3 rounded-xl bg-gray-900 border border-gray-800 text-white placeholder-gray-600 focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-colors"
+                                />
+                            </div>
+                        </div>
+                        <div>
+                            <label for="unit_number" class="block text-sm font-medium text-gray-400 mb-2">
+                                {{ $t('form.unit') }}
+                                <span class="text-gray-600">({{ $t('form.optional') }})</span>
+                            </label>
+                            <input
+                                id="unit_number"
+                                v-model="form.unit"
+                                type="text"
+                                :placeholder="$t('form.unit_placeholder')"
+                                class="w-full px-4 py-3 rounded-xl bg-gray-900 border border-gray-800 text-white placeholder-gray-600 focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-colors"
+                            />
                         </div>
                     </div>
 

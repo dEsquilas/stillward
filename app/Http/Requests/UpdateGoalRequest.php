@@ -21,7 +21,8 @@ class UpdateGoalRequest extends FormRequest
             'type' => ['sometimes', Rule::enum(GoalType::class)],
             'title' => ['sometimes', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
-            'target_value' => ['nullable', 'numeric', 'min:0'],
+            'target_value' => ['nullable', 'numeric'],
+            'initial_value' => ['nullable', 'numeric'],
             'unit' => ['nullable', 'string', 'max:50'],
             'currency' => ['nullable', 'string', 'size:3'],
         ];

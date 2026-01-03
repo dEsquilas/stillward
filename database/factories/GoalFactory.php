@@ -15,6 +15,10 @@ class GoalFactory extends Factory
     public function definition(): array
     {
         $type = fake()->randomElement(GoalType::cases());
+        $initialValue = match ($type) {
+            GoalType::Number => fake()->numberBetween(50, 100),
+            default => null,
+        };
 
         return [
             'user_id' => User::factory(),
@@ -25,11 +29,14 @@ class GoalFactory extends Factory
             'target_value' => match ($type) {
                 GoalType::Counter => fake()->numberBetween(10, 100),
                 GoalType::Money => fake()->numberBetween(1000, 50000),
+                GoalType::Number => fake()->numberBetween(60, 120),
                 GoalType::Percentage, GoalType::YesNo => null,
             },
-            'current_value' => 0,
+            'initial_value' => $initialValue,
+            'current_value' => $initialValue ?? 0,
             'unit' => match ($type) {
                 GoalType::Counter => fake()->randomElement(['books', 'km', 'sessions', 'hours']),
+                GoalType::Number => fake()->randomElement(['kg', 'EUR', 'points']),
                 default => null,
             },
             'currency' => match ($type) {

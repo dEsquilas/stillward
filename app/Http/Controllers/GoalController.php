@@ -54,7 +54,14 @@ class GoalController extends Controller
 
     public function store(StoreGoalRequest $request): RedirectResponse
     {
-        Auth::user()->goals()->create($request->validated());
+        $data = $request->validated();
+
+        // For Number type, set current_value to initial_value
+        if ($data['type'] === GoalType::Number->value && isset($data['initial_value'])) {
+            $data['current_value'] = $data['initial_value'];
+        }
+
+        Auth::user()->goals()->create($data);
 
         return redirect()->route('goals.index')->with('success', 'Goal created.');
     }

@@ -43,6 +43,9 @@ class LogEntryController extends Controller
             GoalType::Percentage => $goal->update([
                 'current_value' => max(0, min(100, $value)),
             ]),
+            GoalType::Number => $goal->update([
+                'current_value' => $value,
+            ]),
         };
 
         // Check if goal is now completed

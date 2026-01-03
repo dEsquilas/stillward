@@ -21,7 +21,8 @@ class StoreGoalRequest extends FormRequest
             'type' => ['required', Rule::enum(GoalType::class)],
             'title' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
-            'target_value' => ['nullable', 'numeric', 'min:0'],
+            'target_value' => ['nullable', 'numeric'],
+            'initial_value' => ['nullable', 'numeric'],
             'unit' => ['nullable', 'string', 'max:50'],
             'currency' => ['nullable', 'string', 'size:3'],
         ];

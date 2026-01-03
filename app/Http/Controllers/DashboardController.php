@@ -97,8 +97,24 @@ class DashboardController extends Controller
                 : 0,
             'yes_no' => $goal->is_completed ? 100 : 0,
             'percentage' => (float) $goal->current_value,
+            'number' => $this->calculateNumberProgress($goal),
             default => 0,
         };
+    }
+
+    private function calculateNumberProgress($goal): float
+    {
+        $initial = (float) $goal->initial_value;
+        $target = (float) $goal->target_value;
+        $current = (float) $goal->current_value;
+
+        $range = $target - $initial;
+        if ($range == 0) {
+            return $current == $target ? 100 : 0;
+        }
+
+        $progress = (($current - $initial) / $range) * 100;
+        return min(100, max(0, $progress));
     }
 
     private function getWeeklyProgressData($user, $goals): array

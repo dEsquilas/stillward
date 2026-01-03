@@ -20,6 +20,7 @@ class Goal extends Model
         'title',
         'description',
         'target_value',
+        'initial_value',
         'current_value',
         'unit',
         'currency',
@@ -34,6 +35,7 @@ class Goal extends Model
             'category' => GoalCategory::class,
             'type' => GoalType::class,
             'target_value' => 'decimal:2',
+            'initial_value' => 'decimal:2',
             'current_value' => 'decimal:2',
             'is_completed' => 'boolean',
             'is_archived' => 'boolean',
@@ -59,6 +61,22 @@ class Goal extends Model
                 : 0,
             GoalType::YesNo => $this->is_completed ? 100 : 0,
             GoalType::Percentage => (float) $this->current_value,
+            GoalType::Number => $this->calculateNumberProgress(),
         };
+    }
+
+    private function calculateNumberProgress(): float
+    {
+        $initial = (float) $this->initial_value;
+        $target = (float) $this->target_value;
+        $current = (float) $this->current_value;
+
+        $range = $target - $initial;
+        if ($range == 0) {
+            return $current == $target ? 100 : 0;
+        }
+
+        $progress = (($current - $initial) / $range) * 100;
+        return min(100, max(0, $progress));
     }
 }

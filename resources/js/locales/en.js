@@ -62,6 +62,7 @@ export default {
         optional: 'optional',
         description_placeholder: 'Add details...',
         target: 'Target',
+        initial: 'Initial Value',
         unit: 'Unit',
         unit_placeholder: 'books, km...',
         currency: 'Currency',
@@ -78,6 +79,7 @@ export default {
         yes_no: 'Yes/No',
         percentage: 'Percentage',
         money: 'Money',
+        number: 'Number',
     },
 
     // Categories
@@ -96,9 +98,11 @@ export default {
         mark_complete: 'Mark as Complete',
         completed: 'Completed',
         custom_value: 'Custom value',
+        current_value: 'Current Value',
         amount: 'Amount',
         add: 'Add',
         subtract: 'Subtract',
+        update: 'Update',
         archive: 'Archive',
         restore: 'Restore',
         delete: 'Delete',

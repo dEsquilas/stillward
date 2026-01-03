@@ -67,7 +67,7 @@ class GoalControllerTest extends TestCase
         $response->assertInertia(fn ($page) => $page
             ->component('Goals/Create')
             ->has('categories', 4)
-            ->has('types', 4)
+            ->has('types', 5)
         );
     }
 
