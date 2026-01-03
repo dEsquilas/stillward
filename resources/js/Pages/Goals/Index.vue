@@ -29,15 +29,32 @@ const overallProgress = computed(() => {
 const getProgress = (goal) => {
     if (goal.type === 'yes_no') return goal.is_completed ? 100 : 0;
     if (goal.type === 'percentage') return parseFloat(goal.current_value) || 0;
-    if (goal.target_value > 0) return Math.min(100, (goal.current_value / goal.target_value) * 100);
-    return 0;
+
+    // For counter, number, and money types - use initial value if available
+    const initial = parseFloat(goal.initial_value) || 0;
+    const target = parseFloat(goal.target_value) || 0;
+    const current = parseFloat(goal.current_value) || 0;
+
+    const range = target - initial;
+    if (range === 0) {
+        return current === target ? 100 : 0;
+    }
+
+    const progress = ((current - initial) / range) * 100;
+    return Math.min(100, Math.max(0, progress));
 };
 
 const getProgressText = (goal) => {
     if (goal.type === 'yes_no') return goal.is_completed ? t('goals.done') : t('goals.pending');
     if (goal.type === 'percentage') return `${goal.current_value}%`;
     if (goal.type === 'money') return `${goal.currency} ${goal.current_value}/${goal.target_value}`;
-    return `${goal.current_value}/${goal.target_value}`;
+
+    // For number/counter with initial value, show current → target
+    const current = parseFloat(goal.current_value) || 0;
+    const target = parseFloat(goal.target_value) || 0;
+    const unit = goal.unit ? ` ${goal.unit}` : '';
+
+    return `${current}${unit} → ${target}${unit}`;
 };
 
 const quickLog = (goal, e) => {
@@ -47,7 +64,8 @@ const quickLog = (goal, e) => {
     if (processing.value) return;
     processing.value = goal.id;
 
-    const value = goal.type === 'yes_no' ? (goal.is_completed ? 0 : 1) : 1;
+    // Use goal's increment value (defaults to 1 if not set)
+    const value = goal.type === 'yes_no' ? (goal.is_completed ? 0 : 1) : (goal.increment || 1);
 
     router.post(
         route('goals.log', goal.id),
@@ -290,7 +308,11 @@ const canQuickLog = (goal) => {
                                             <path
                                                 stroke-linecap="round"
                                                 stroke-linejoin="round"
-                                                d="M12 4v16m8-8H4"
+                                                :d="
+                                                    (goal.increment || 1) >= 0
+                                                        ? 'M12 4v16m8-8H4'
+                                                        : 'M4 12h16'
+                                                "
                                             />
                                         </svg>
                                     </button>
