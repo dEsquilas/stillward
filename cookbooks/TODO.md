@@ -10,37 +10,37 @@ Este documento contiene todas las tareas necesarias para desarrollar Stillward, 
 
 #### 0.1 Inicialización del proyecto
 
-- [ ] Inicializar proyecto Laravel con Sail
+- [x] Inicializar proyecto Laravel con Sail
   ```bash
   curl -s "https://laravel.build/stillward?with=mysql,redis" | bash
   cd stillward
   ```
-- [ ] Configurar Git e inicializar repositorio
+- [x] Configurar Git e inicializar repositorio
   ```bash
   git init
   git add .
   git commit -m "chore: initial Laravel Sail setup"
   ```
-- [ ] Levantar entorno con Docker
+- [x] Levantar entorno con Docker
   ```bash
   ./vendor/bin/sail up -d
   ```
-- [ ] Configurar alias de Sail (añadir a `~/.zshrc` o `~/.bashrc`)
+- [x] Configurar alias de Sail (añadir a `~/.zshrc` o `~/.bashrc`)
   ```bash
   alias sail='./vendor/bin/sail'
   ```
 
 #### 0.2 Scaffolding Vue + Inertia
 
-- [ ] Instalar Inertia.js (lado servidor)
+- [x] Instalar Inertia.js (lado servidor)
   ```bash
   sail composer require inertiajs/inertia-laravel
   ```
-- [ ] Crear middleware de Inertia
+- [x] Crear middleware de Inertia
   ```bash
   sail artisan inertia:middleware
   ```
-- [ ] Registrar middleware en `bootstrap/app.php`:
+- [x] Registrar middleware en `bootstrap/app.php`:
   ```php
   ->withMiddleware(function (Middleware $middleware) {
       $middleware->web(append: [
@@ -48,7 +48,7 @@ Este documento contiene todas las tareas necesarias para desarrollar Stillward, 
       ]);
   })
   ```
-- [ ] Crear template blade `resources/views/app.blade.php`:
+- [x] Crear template blade `resources/views/app.blade.php`:
   ```blade
   <!DOCTYPE html>
   <html>
@@ -63,11 +63,11 @@ Este documento contiene todas las tareas necesarias para desarrollar Stillward, 
     </body>
   </html>
   ```
-- [ ] Instalar dependencias de frontend
+- [x] Instalar dependencias de frontend
   ```bash
   sail npm install vue@latest @inertiajs/vue3 @vitejs/plugin-vue
   ```
-- [ ] Configurar Vite (`vite.config.js`):
+- [x] Configurar Vite (`vite.config.js`):
   ```js
   import { defineConfig } from 'vite';
   import laravel from 'laravel-vite-plugin';
@@ -95,7 +95,7 @@ Este documento contiene todas las tareas necesarias para desarrollar Stillward, 
       },
   });
   ```
-- [ ] Configurar app.js (`resources/js/app.js`):
+- [x] Configurar app.js (`resources/js/app.js`):
   ```js
   import { createApp, h } from 'vue';
   import { createInertiaApp } from '@inertiajs/vue3';
@@ -113,13 +113,13 @@ Este documento contiene todas las tareas necesarias para desarrollar Stillward, 
       },
   });
   ```
-- [ ] Crear estructura de carpetas para Vue:
+- [x] Crear estructura de carpetas para Vue:
   ```bash
   mkdir -p resources/js/Pages
   mkdir -p resources/js/Components
   mkdir -p resources/js/Layouts
   ```
-- [ ] Crear página de prueba `resources/js/Pages/Welcome.vue`:
+- [x] Crear página de prueba `resources/js/Pages/Welcome.vue`:
   ```vue
   <script setup>
   defineProps({
@@ -133,7 +133,7 @@ Este documento contiene todas las tareas necesarias para desarrollar Stillward, 
       </div>
   </template>
   ```
-- [ ] Actualizar ruta en `routes/web.php`:
+- [x] Actualizar ruta en `routes/web.php`:
   ```php
   use Inertia\Inertia;
 
@@ -146,12 +146,12 @@ Este documento contiene todas las tareas necesarias para desarrollar Stillward, 
 
 #### 0.3 Tailwind CSS
 
-- [ ] Instalar Tailwind CSS
+- [x] Instalar Tailwind CSS
   ```bash
   sail npm install -D tailwindcss postcss autoprefixer
   sail npx tailwindcss init -p
   ```
-- [ ] Configurar `tailwind.config.js`:
+- [x] Configurar `tailwind.config.js`:
   ```js
   /** @type {import('tailwindcss').Config} */
   export default {
@@ -173,7 +173,7 @@ Este documento contiene todas las tareas necesarias para desarrollar Stillward, 
       plugins: [],
   };
   ```
-- [ ] Configurar `resources/css/app.css`:
+- [x] Configurar `resources/css/app.css`:
   ```css
   @tailwind base;
   @tailwind components;
@@ -182,11 +182,11 @@ Este documento contiene todas las tareas necesarias para desarrollar Stillward, 
 
 #### 0.4 Herramientas de calidad de código
 
-- [ ] Instalar ESLint + Prettier
+- [x] Instalar ESLint + Prettier
   ```bash
   sail npm install -D eslint prettier eslint-plugin-vue @vue/eslint-config-prettier
   ```
-- [ ] Crear `.eslintrc.cjs`:
+- [x] Crear `.eslintrc.cjs`:
   ```js
   module.exports = {
       root: true,
@@ -202,7 +202,7 @@ Este documento contiene todas las tareas necesarias para desarrollar Stillward, 
       },
   };
   ```
-- [ ] Crear `.prettierrc`:
+- [x] Crear `.prettierrc`:
   ```json
   {
       "semi": true,
@@ -211,18 +211,18 @@ Este documento contiene todas las tareas necesarias para desarrollar Stillward, 
       "trailingComma": "es5"
   }
   ```
-- [ ] Instalar PHPStan
+- [x] Instalar PHPStan
   ```bash
   sail composer require --dev phpstan/phpstan
   ```
-- [ ] Crear `phpstan.neon`:
+- [x] Crear `phpstan.neon`:
   ```neon
   parameters:
       level: 8
       paths:
           - app
   ```
-- [ ] Añadir scripts a `package.json`:
+- [x] Añadir scripts a `package.json`:
   ```json
   "scripts": {
       "lint": "eslint resources/js --ext .js,.vue",
@@ -233,21 +233,21 @@ Este documento contiene todas las tareas necesarias para desarrollar Stillward, 
 
 #### 0.5 Verificación final
 
-- [ ] Ejecutar migrations iniciales (`sail artisan migrate`)
-- [ ] Compilar assets (`sail npm run dev`)
-- [ ] Verificar que todo funciona
+- [x] Ejecutar migrations iniciales (`sail artisan migrate`)
+- [x] Compilar assets (`sail npm run dev`)
+- [x] Verificar que todo funciona
 
 ### Checklist de Pruebas
 
-- [ ] `sail up` levanta contenedores sin errores
-- [ ] `sail artisan serve` no es necesario (ya corre en el contenedor)
-- [ ] Acceso a `http://localhost` muestra página de Laravel
-- [ ] `sail npm run dev` compila assets sin errores
-- [ ] Hot reload funciona (cambiar Vue component y ver cambio)
-- [ ] `sail artisan test` pasa (tests por defecto de Laravel)
-- [ ] Conexión a MySQL funciona (`sail artisan migrate`)
-- [ ] Acceso a MySQL desde host (`localhost:3306`)
-- [ ] Redis funciona (`sail artisan tinker` -> `Cache::put('test', 'ok')`)
+- [x] `sail up` levanta contenedores sin errores
+- [x] `sail artisan serve` no es necesario (ya corre en el contenedor)
+- [x] Acceso a `http://localhost` muestra página de Laravel
+- [x] `sail npm run dev` compila assets sin errores
+- [x] Hot reload funciona (cambiar Vue component y ver cambio)
+- [x] `sail artisan test` pasa (tests por defecto de Laravel)
+- [x] Conexión a MySQL funciona (`sail artisan migrate`)
+- [x] Acceso a MySQL desde host (`localhost:3306`)
+- [x] Redis funciona (`sail artisan tinker` -> `Cache::put('test', 'ok')`)
 
 ---
 
@@ -255,31 +255,31 @@ Este documento contiene todas las tareas necesarias para desarrollar Stillward, 
 
 ### Tareas
 
-- [ ] Instalar Laravel Socialite (`sail composer require laravel/socialite`)
-- [ ] Crear proyecto en Google Cloud Console
-- [ ] Configurar OAuth 2.0 credentials (Client ID, Client Secret)
-- [ ] Añadir variables de entorno para Google OAuth en `.env`
-- [ ] Crear rutas de autenticación (`/auth/google`, `/auth/google/callback`)
-- [ ] Implementar `AuthController` con métodos redirect y callback
-- [ ] Crear/actualizar modelo `User` con campos necesarios (google_id, avatar, etc.)
-- [ ] Crear migration para campos adicionales de User
-- [ ] Implementar lógica de crear usuario si no existe, o login si existe
-- [ ] Configurar middleware de autenticación
-- [ ] Crear página de Login con botón "Sign in with Google"
-- [ ] Implementar logout
-- [ ] Redirigir usuarios no autenticados a login
+- [x] Instalar Laravel Socialite (`sail composer require laravel/socialite`)
+- [x] Crear proyecto en Google Cloud Console
+- [x] Configurar OAuth 2.0 credentials (Client ID, Client Secret)
+- [x] Añadir variables de entorno para Google OAuth en `.env`
+- [x] Crear rutas de autenticación (`/auth/google`, `/auth/google/callback`)
+- [x] Implementar `AuthController` con métodos redirect y callback
+- [x] Crear/actualizar modelo `User` con campos necesarios (google_id, avatar, etc.)
+- [x] Crear migration para campos adicionales de User
+- [x] Implementar lógica de crear usuario si no existe, o login si existe
+- [x] Configurar middleware de autenticación
+- [x] Crear página de Login con botón "Sign in with Google"
+- [x] Implementar logout
+- [x] Redirigir usuarios no autenticados a login
 
 ### Checklist de Pruebas
 
-- [ ] Botón "Sign in with Google" redirige a Google OAuth
-- [ ] Después de autorizar en Google, vuelve a la app
-- [ ] Usuario nuevo: se crea registro en BD con datos de Google
-- [ ] Usuario existente: hace login sin crear duplicado
-- [ ] Sesión persiste al refrescar página
-- [ ] Logout cierra sesión correctamente
-- [ ] Rutas protegidas redirigen a login si no autenticado
-- [ ] No se puede acceder a `/auth/google/callback` directamente sin código OAuth
-- [ ] Avatar del usuario se guarda y muestra correctamente
+- [x] Botón "Sign in with Google" redirige a Google OAuth
+- [x] Después de autorizar en Google, vuelve a la app
+- [x] Usuario nuevo: se crea registro en BD con datos de Google
+- [x] Usuario existente: hace login sin crear duplicado
+- [x] Sesión persiste al refrescar página
+- [x] Logout cierra sesión correctamente
+- [x] Rutas protegidas redirigen a login si no autenticado
+- [x] No se puede acceder a `/auth/google/callback` directamente sin código OAuth
+- [x] Avatar del usuario se guarda y muestra correctamente
 
 ---
 
@@ -287,35 +287,35 @@ Este documento contiene todas las tareas necesarias para desarrollar Stillward, 
 
 ### Tareas
 
-- [ ] Diseñar schema de base de datos
-- [ ] Crear migration para tabla `goals`
+- [x] Diseñar schema de base de datos
+- [x] Crear migration para tabla `goals`
   - `id`, `user_id`, `category`, `type`, `title`, `description`
   - `target_value`, `current_value`, `unit`, `currency`
   - `is_completed`, `completed_at`, `is_archived`
   - `created_at`, `updated_at`
-- [ ] Crear migration para tabla `log_entries`
+- [x] Crear migration para tabla `log_entries`
   - `id`, `user_id`, `goal_id`, `value`, `note`, `created_at`
-- [ ] Crear modelo `Goal` con relaciones y casts
-- [ ] Crear modelo `LogEntry` con relaciones
-- [ ] Definir constantes/enums para categories y goal types
-- [ ] Implementar accessors para progreso calculado en Goal
+- [x] Crear modelo `Goal` con relaciones y casts
+- [x] Crear modelo `LogEntry` con relaciones
+- [x] Definir constantes/enums para categories y goal types
+- [x] Implementar accessors para progreso calculado en Goal
 - [ ] Crear factories para Goal y LogEntry
 - [ ] Crear seeders con datos de ejemplo
 
 ### Checklist de Pruebas
 
-- [ ] Migrations ejecutan sin errores (`sail artisan migrate:fresh`)
+- [x] Migrations ejecutan sin errores (`sail artisan migrate:fresh`)
 - [ ] Seeders crean datos correctamente (`sail artisan db:seed`)
-- [ ] Relación User -> Goals funciona
-- [ ] Relación Goal -> LogEntries funciona
-- [ ] Relación LogEntry -> Goal funciona
-- [ ] Cast de `category` a enum funciona
-- [ ] Cast de `type` a enum funciona
-- [ ] Accessor de progreso calcula correctamente para cada tipo:
-  - [ ] Counter: `current_value / target_value`
-  - [ ] Yes/No: 0% o 100%
-  - [ ] Percentage: valor directo
-  - [ ] Money: `current_amount / target_amount`
+- [x] Relación User -> Goals funciona
+- [x] Relación Goal -> LogEntries funciona
+- [x] Relación LogEntry -> Goal funciona
+- [x] Cast de `category` a enum funciona
+- [x] Cast de `type` a enum funciona
+- [x] Accessor de progreso calcula correctamente para cada tipo:
+  - [x] Counter: `current_value / target_value`
+  - [x] Yes/No: 0% o 100%
+  - [x] Percentage: valor directo
+  - [x] Money: `current_amount / target_amount`
 - [ ] Factory genera datos válidos
 - [ ] Soft delete de goals funciona (si se implementa)
 
@@ -327,47 +327,47 @@ Este documento contiene todas las tareas necesarias para desarrollar Stillward, 
 
 #### Backend
 
-- [ ] Crear `GoalController` con métodos CRUD
-- [ ] Implementar `index` - listar goals del usuario agrupados por categoría
-- [ ] Implementar `store` - crear nuevo goal con validación
-- [ ] Implementar `show` - ver detalle de un goal
-- [ ] Implementar `update` - editar goal existente
-- [ ] Implementar `archive` - archivar goal sin eliminar
-- [ ] Implementar `restore` - restaurar goal archivado
-- [ ] Crear Form Requests para validación (`StoreGoalRequest`, `UpdateGoalRequest`)
-- [ ] Definir rutas en `web.php`
+- [x] Crear `GoalController` con métodos CRUD
+- [x] Implementar `index` - listar goals del usuario agrupados por categoría
+- [x] Implementar `store` - crear nuevo goal con validación
+- [x] Implementar `show` - ver detalle de un goal
+- [x] Implementar `update` - editar goal existente
+- [x] Implementar `archive` - archivar goal sin eliminar
+- [x] Implementar `restore` - restaurar goal archivado
+- [x] Crear Form Requests para validación (`StoreGoalRequest`, `UpdateGoalRequest`)
+- [x] Definir rutas en `web.php`
 - [ ] Añadir policies para autorización (solo owner puede editar)
 
 #### Frontend
 
-- [ ] Crear layout principal con navegación (bottom tabs o sidebar)
-- [ ] Crear página `Goals/Index.vue` - listado por categorías
-- [ ] Crear componente `GoalCard.vue` - tarjeta de goal individual
-- [ ] Crear página `Goals/Create.vue` - formulario de creación
-- [ ] Crear página `Goals/Edit.vue` - formulario de edición
-- [ ] Crear página `Goals/Show.vue` - detalle de goal
-- [ ] Implementar selección de categoría con iconos/colores
-- [ ] Implementar selección de tipo con explicación de cada uno
-- [ ] Implementar campos condicionales según tipo (unit, currency, target, etc.)
-- [ ] Añadir confirmación antes de archivar
-- [ ] Mostrar goals archivados en sección separada
+- [x] Crear layout principal con navegación (bottom tabs o sidebar)
+- [x] Crear página `Goals/Index.vue` - listado por categorías
+- [x] Crear componente `GoalCard.vue` - tarjeta de goal individual (luego eliminado, ahora inline)
+- [x] Crear página `Goals/Create.vue` - formulario de creación
+- [x] Crear página `Goals/Edit.vue` - formulario de edición
+- [x] Crear página `Goals/Show.vue` - detalle de goal
+- [x] Implementar selección de categoría con iconos/colores
+- [x] Implementar selección de tipo con explicación de cada uno
+- [x] Implementar campos condicionales según tipo (unit, currency, target, etc.)
+- [x] Añadir confirmación antes de archivar
+- [x] Mostrar goals archivados en sección separada
 
 ### Checklist de Pruebas
 
-- [ ] Lista de goals carga correctamente
-- [ ] Goals se agrupan por categoría
-- [ ] Crear goal tipo Counter funciona
-- [ ] Crear goal tipo Yes/No funciona
-- [ ] Crear goal tipo Percentage funciona
-- [ ] Crear goal tipo Money funciona
-- [ ] Validación de formulario muestra errores
-- [ ] Campos requeridos no pueden estar vacíos
-- [ ] Editar goal guarda cambios
-- [ ] Archivar goal lo mueve a sección archivados
-- [ ] Restaurar goal lo devuelve a activos
+- [x] Lista de goals carga correctamente
+- [x] Goals se agrupan por categoría
+- [x] Crear goal tipo Counter funciona
+- [x] Crear goal tipo Yes/No funciona
+- [x] Crear goal tipo Percentage funciona
+- [x] Crear goal tipo Money funciona
+- [x] Validación de formulario muestra errores
+- [x] Campos requeridos no pueden estar vacíos
+- [x] Editar goal guarda cambios
+- [x] Archivar goal lo mueve a sección archivados
+- [x] Restaurar goal lo devuelve a activos
 - [ ] No se puede editar goal de otro usuario (403)
-- [ ] Navegación entre páginas funciona
-- [ ] Responsive: funciona en móvil y desktop
+- [x] Navegación entre páginas funciona
+- [x] Responsive: funciona en móvil y desktop
 
 ---
 
@@ -377,53 +377,53 @@ Este documento contiene todas las tareas necesarias para desarrollar Stillward, 
 
 #### Backend
 
-- [ ] Crear `LogEntryController`
-- [ ] Implementar `store` - registrar entrada de log
-- [ ] Implementar lógica para actualizar `current_value` del goal según tipo
-- [ ] Implementar `index` - listar entries recientes (para Recent Activity)
-- [ ] Crear Form Request para validación de log entry
-- [ ] Definir rutas
+- [x] Crear `LogEntryController`
+- [x] Implementar `store` - registrar entrada de log
+- [x] Implementar lógica para actualizar `current_value` del goal según tipo
+- [x] Implementar `index` - listar entries recientes (para Recent Activity) — integrado en Goals/Show
+- [x] Crear Form Request para validación de log entry
+- [x] Definir rutas
 
 #### Frontend
 
-- [ ] Crear página `QuickLog/Index.vue` - vista de 4 categorías
-- [ ] Crear componente `CategoryCard.vue` - tarjeta de categoría clickeable
-- [ ] Crear página `QuickLog/Category.vue` - goals de una categoría
-- [ ] Crear componente `QuickLogAction.vue` - acciones según tipo de goal
-  - [ ] Counter: botones +1, -1, input custom
-  - [ ] Yes/No: toggle switch
-  - [ ] Percentage: slider 0-100
-  - [ ] Money: input numérico con +/-
-- [ ] Implementar feedback visual al registrar (animación, toast, etc.)
+- [x] Crear página `QuickLog/Index.vue` - vista de 4 categorías — integrado en Goals/Index con botón rápido
+- [x] Crear componente `CategoryCard.vue` - tarjeta de categoría clickeable — no necesario, ya agrupado
+- [x] Crear página `QuickLog/Category.vue` - goals de una categoría — integrado en Goals/Index
+- [x] Crear componente `QuickLogAction.vue` - acciones según tipo de goal — integrado en Goals/Show
+  - [x] Counter: botones +1, -1, input custom
+  - [x] Yes/No: toggle switch
+  - [x] Percentage: slider 0-100
+  - [x] Money: input numérico con +/-
+- [x] Implementar feedback visual al registrar (animación, toast, etc.) — spinner de loading
 - [ ] Añadir campo opcional de nota
-- [ ] Mostrar valor actual y progreso del goal
+- [x] Mostrar valor actual y progreso del goal
 
 ### Checklist de Pruebas
 
-- [ ] Vista de categorías muestra las 4 categorías con iconos/colores
-- [ ] Click en categoría muestra goals activos de esa categoría
-- [ ] Goal tipo Counter:
-  - [ ] Botón +1 suma 1 al valor actual
-  - [ ] Botón -1 resta 1 al valor actual
-  - [ ] Input custom permite valores arbitrarios
+- [x] Vista de categorías muestra las 4 categorías con iconos/colores
+- [x] Click en categoría muestra goals activos de esa categoría
+- [x] Goal tipo Counter:
+  - [x] Botón +1 suma 1 al valor actual
+  - [x] Botón -1 resta 1 al valor actual
+  - [x] Input custom permite valores arbitrarios
   - [ ] No permite valor negativo total
-- [ ] Goal tipo Yes/No:
-  - [ ] Toggle marca como completado
-  - [ ] Toggle desmarca (vuelve a 0%)
-  - [ ] Fecha de completado se guarda
-- [ ] Goal tipo Percentage:
-  - [ ] Slider actualiza valor
+- [x] Goal tipo Yes/No:
+  - [x] Toggle marca como completado
+  - [x] Toggle desmarca (vuelve a 0%)
+  - [x] Fecha de completado se guarda
+- [x] Goal tipo Percentage:
+  - [x] Slider actualiza valor
   - [ ] Input numérico funciona
-  - [ ] Valor se limita a 0-100
-- [ ] Goal tipo Money:
-  - [ ] Input permite sumar cantidad
-  - [ ] Input permite restar cantidad
-  - [ ] Muestra currency correcta
-- [ ] LogEntry se crea en base de datos
+  - [x] Valor se limita a 0-100
+- [x] Goal tipo Money:
+  - [x] Input permite sumar cantidad
+  - [x] Input permite restar cantidad
+  - [x] Muestra currency correcta
+- [x] LogEntry se crea en base de datos
 - [ ] Nota opcional se guarda
-- [ ] Progreso del goal se actualiza inmediatamente
-- [ ] Feedback visual aparece tras log exitoso
-- [ ] Funciona bien en móvil (touch friendly)
+- [x] Progreso del goal se actualiza inmediatamente
+- [x] Feedback visual aparece tras log exitoso
+- [x] Funciona bien en móvil (touch friendly)
 
 ---
 
