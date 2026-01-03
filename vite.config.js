@@ -4,8 +4,14 @@ import vue from '@vitejs/plugin-vue';
 import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig({
+    resolve: {
+        dedupe: ['lodash-es', 'qs', 'deepmerge'],
+    },
     optimizeDeps: {
         include: ['lodash-es', 'qs', 'deepmerge'],
+    },
+    ssr: {
+        noExternal: ['lodash-es', 'qs', 'deepmerge'],
     },
     plugins: [
         laravel({
