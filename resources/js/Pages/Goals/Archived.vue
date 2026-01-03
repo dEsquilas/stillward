@@ -1,6 +1,9 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link, router } from '@inertiajs/vue3';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 defineProps({
     goals: Object,
@@ -13,7 +16,7 @@ const restore = (goalId) => {
 </script>
 
 <template>
-    <Head title="Archived Goals" />
+    <Head :title="$t('goals.archived')" />
 
     <AuthenticatedLayout>
         <div class="min-h-screen px-4 py-6 sm:px-6 lg:px-8">
@@ -38,7 +41,7 @@ const restore = (goalId) => {
                             />
                         </svg>
                     </Link>
-                    <h1 class="text-xl font-bold text-white">Archived</h1>
+                    <h1 class="text-xl font-bold text-white">{{ $t('goals.archived') }}</h1>
                 </div>
 
                 <!-- Empty State -->
@@ -60,7 +63,7 @@ const restore = (goalId) => {
                             />
                         </svg>
                     </div>
-                    <p class="text-gray-500">No archived goals</p>
+                    <p class="text-gray-500">{{ $t('goals.no_archived') }}</p>
                 </div>
 
                 <!-- Archived Goals -->
@@ -73,7 +76,9 @@ const restore = (goalId) => {
                                     class="w-2 h-2 rounded-full"
                                     :style="{ backgroundColor: category.color }"
                                 ></div>
-                                <span class="text-sm text-gray-500">{{ category.label }}</span>
+                                <span class="text-sm text-gray-500">{{
+                                    $t(`categories.${category.value}`)
+                                }}</span>
                             </div>
 
                             <!-- Goals -->
@@ -88,7 +93,7 @@ const restore = (goalId) => {
                                         @click="restore(goal.id)"
                                         class="text-sm text-violet-400 hover:text-violet-300 transition-colors"
                                     >
-                                        Restore
+                                        {{ $t('detail.restore') }}
                                     </button>
                                 </div>
                             </div>

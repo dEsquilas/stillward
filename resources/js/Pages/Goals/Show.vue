@@ -2,6 +2,9 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link, router, useForm } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 const props = defineProps({
     goal: Object,
@@ -22,7 +25,7 @@ const progress = computed(() => {
 
 const progressText = computed(() => {
     if (props.goal.type === 'yes_no')
-        return props.goal.is_completed ? 'Completed' : 'Not completed';
+        return props.goal.is_completed ? t('detail.completed') : t('goals.not_completed');
     if (props.goal.type === 'percentage') return `${props.goal.current_value}%`;
     if (props.goal.type === 'money')
         return `${props.goal.currency} ${props.goal.current_value} / ${props.goal.target_value}`;
@@ -39,7 +42,6 @@ const logForm = useForm({
 
 const customValue = ref('');
 const percentageValue = ref(parseFloat(props.goal.current_value) || 0);
-const showNoteInput = ref(false);
 
 const logProgress = (value) => {
     logForm.value = value;
@@ -48,7 +50,6 @@ const logProgress = (value) => {
         onSuccess: () => {
             logForm.reset();
             customValue.value = '';
-            showNoteInput.value = false;
         },
     });
 };
@@ -68,19 +69,30 @@ const updatePercentage = () => {
 };
 
 const archive = () => {
-    if (confirm('Archive this goal?')) {
+    if (confirm(t('detail.confirm_archive'))) {
         router.post(route('goals.archive', props.goal.id));
     }
 };
 
 const deleteGoal = () => {
-    if (confirm('Delete this goal? This cannot be undone.')) {
+    if (confirm(t('detail.confirm_delete'))) {
         router.delete(route('goals.destroy', props.goal.id));
     }
 };
 
 const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    const date = new Date(dateString);
+    const now = new Date();
+    const diff = now - date;
+    const minutes = Math.floor(diff / 60000);
+    const hours = Math.floor(diff / 3600000);
+    const days = Math.floor(diff / 86400000);
+
+    if (minutes < 1) return t('time.just_now');
+    if (minutes < 60) return t('time.minutes_ago', { count: minutes });
+    if (hours < 24) return t('time.hours_ago', { count: hours });
+    if (days < 7) return t('time.days_ago', { count: days });
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 };
 </script>
 
@@ -116,7 +128,9 @@ const formatDate = (dateString) => {
                                 class="w-2 h-2 rounded-full"
                                 :style="{ backgroundColor: category.color }"
                             ></div>
-                            <span class="text-xs text-gray-500">{{ category.label }}</span>
+                            <span class="text-xs text-gray-500">{{
+                                $t(`categories.${category.value}`)
+                            }}</span>
                         </div>
                         <h1 class="text-xl font-bold text-white truncate">{{ goal.title }}</h1>
                     </div>
@@ -172,14 +186,16 @@ const formatDate = (dateString) => {
                                     clip-rule="evenodd"
                                 />
                             </svg>
-                            Goal Completed
+                            {{ $t('detail.goal_completed') }}
                         </span>
                     </div>
                 </div>
 
                 <!-- Quick Log -->
                 <div class="p-4 rounded-2xl bg-gray-900 border border-gray-800 mb-6">
-                    <h2 class="text-sm font-medium text-gray-500 mb-4">Log Progress</h2>
+                    <h2 class="text-sm font-medium text-gray-500 mb-4">
+                        {{ $t('detail.log_progress') }}
+                    </h2>
 
                     <!-- Counter Type -->
                     <div v-if="goal.type === 'counter'" class="space-y-3">
@@ -203,7 +219,7 @@ const formatDate = (dateString) => {
                             <input
                                 v-model="customValue"
                                 type="number"
-                                placeholder="Custom value"
+                                :placeholder="$t('detail.custom_value')"
                                 class="flex-1 px-4 py-3 rounded-xl bg-gray-800 border border-gray-700 text-white placeholder-gray-500 focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
                             />
                             <button
@@ -211,7 +227,7 @@ const formatDate = (dateString) => {
                                 :disabled="logForm.processing || !customValue"
                                 class="px-6 py-3 rounded-xl bg-gray-800 text-white font-medium hover:bg-gray-700 transition-colors disabled:opacity-50"
                             >
-                                Add
+                                {{ $t('detail.add') }}
                             </button>
                         </div>
                     </div>
@@ -241,7 +257,11 @@ const formatDate = (dateString) => {
                                         clip-rule="evenodd"
                                     />
                                 </svg>
-                                {{ goal.is_completed ? 'Completed' : 'Mark as Complete' }}
+                                {{
+                                    goal.is_completed
+                                        ? $t('detail.completed')
+                                        : $t('detail.mark_complete')
+                                }}
                             </span>
                         </button>
                     </div>
@@ -265,7 +285,7 @@ const formatDate = (dateString) => {
                             :disabled="logForm.processing"
                             class="w-full py-3 rounded-xl bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white font-medium shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 transition-all disabled:opacity-50"
                         >
-                            Update Progress
+                            {{ $t('detail.update_progress') }}
                         </button>
                     </div>
 
@@ -281,7 +301,7 @@ const formatDate = (dateString) => {
                                 v-model="customValue"
                                 type="number"
                                 step="0.01"
-                                placeholder="Amount"
+                                :placeholder="$t('detail.amount')"
                                 class="flex-1 px-4 py-3 rounded-xl bg-gray-800 border border-gray-700 text-white placeholder-gray-500 focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
                             />
                         </div>
@@ -294,7 +314,7 @@ const formatDate = (dateString) => {
                                 :disabled="logForm.processing || !customValue"
                                 class="flex-1 py-3 rounded-xl bg-gray-800 text-white font-medium hover:bg-gray-700 transition-colors disabled:opacity-50"
                             >
-                                - Subtract
+                                - {{ $t('detail.subtract') }}
                             </button>
                             <button
                                 @click="
@@ -303,7 +323,7 @@ const formatDate = (dateString) => {
                                 :disabled="logForm.processing || !customValue"
                                 class="flex-1 py-3 rounded-xl bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white font-medium shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 transition-all disabled:opacity-50"
                             >
-                                + Add
+                                + {{ $t('detail.add') }}
                             </button>
                         </div>
                     </div>
@@ -319,7 +339,9 @@ const formatDate = (dateString) => {
 
                 <!-- Activity -->
                 <div v-if="goal.log_entries?.length" class="mb-6">
-                    <h2 class="text-sm font-medium text-gray-500 mb-3">Recent Activity</h2>
+                    <h2 class="text-sm font-medium text-gray-500 mb-3">
+                        {{ $t('dashboard.recent_activity') }}
+                    </h2>
                     <div class="space-y-2">
                         <div
                             v-for="entry in goal.log_entries.slice(0, 5)"
@@ -358,7 +380,7 @@ const formatDate = (dateString) => {
                                 d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"
                             />
                         </svg>
-                        Archive
+                        {{ $t('detail.archive') }}
                     </button>
                     <button
                         @click="deleteGoal"

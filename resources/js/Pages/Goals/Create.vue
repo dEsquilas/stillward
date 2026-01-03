@@ -1,6 +1,9 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 defineProps({
     categories: Array,
@@ -30,7 +33,7 @@ const typeIcons = {
 </script>
 
 <template>
-    <Head title="Create Goal" />
+    <Head :title="$t('goals.new_goal')" />
 
     <AuthenticatedLayout>
         <div class="min-h-screen px-4 py-6 sm:px-6 lg:px-8">
@@ -55,13 +58,15 @@ const typeIcons = {
                             />
                         </svg>
                     </Link>
-                    <h1 class="text-xl font-bold text-white">New Goal</h1>
+                    <h1 class="text-xl font-bold text-white">{{ $t('goals.new_goal') }}</h1>
                 </div>
 
                 <form @submit.prevent="submit" class="space-y-6">
                     <!-- Category -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-400 mb-3">Category</label>
+                        <label class="block text-sm font-medium text-gray-400 mb-3">{{
+                            $t('form.category')
+                        }}</label>
                         <div class="grid grid-cols-2 gap-2">
                             <button
                                 v-for="cat in categories"
@@ -81,7 +86,7 @@ const typeIcons = {
                                         :style="{ backgroundColor: cat.color }"
                                     ></div>
                                     <span class="text-sm font-medium text-white">{{
-                                        cat.label
+                                        $t(`categories.${cat.value}`)
                                     }}</span>
                                 </div>
                             </button>
@@ -93,7 +98,9 @@ const typeIcons = {
 
                     <!-- Type -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-400 mb-3">Type</label>
+                        <label class="block text-sm font-medium text-gray-400 mb-3">{{
+                            $t('form.type')
+                        }}</label>
                         <div class="grid grid-cols-2 gap-2">
                             <button
                                 v-for="t in types"
@@ -122,7 +129,7 @@ const typeIcons = {
                                         />
                                     </svg>
                                     <span class="text-sm font-medium text-white">{{
-                                        t.label
+                                        $t(`types.${t.value}`)
                                     }}</span>
                                 </div>
                             </button>
@@ -134,14 +141,14 @@ const typeIcons = {
 
                     <!-- Title -->
                     <div>
-                        <label for="title" class="block text-sm font-medium text-gray-400 mb-2"
-                            >Title</label
-                        >
+                        <label for="title" class="block text-sm font-medium text-gray-400 mb-2">{{
+                            $t('form.title')
+                        }}</label>
                         <input
                             id="title"
                             v-model="form.title"
                             type="text"
-                            placeholder="e.g., Read 20 books"
+                            :placeholder="$t('form.title_placeholder')"
                             class="w-full px-4 py-3 rounded-xl bg-gray-900 border border-gray-800 text-white placeholder-gray-600 focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-colors"
                         />
                         <p v-if="form.errors.title" class="mt-2 text-sm text-red-400">
@@ -155,13 +162,14 @@ const typeIcons = {
                             for="description"
                             class="block text-sm font-medium text-gray-400 mb-2"
                         >
-                            Description <span class="text-gray-600">(optional)</span>
+                            {{ $t('form.description') }}
+                            <span class="text-gray-600">({{ $t('form.optional') }})</span>
                         </label>
                         <textarea
                             id="description"
                             v-model="form.description"
                             rows="3"
-                            placeholder="Add details..."
+                            :placeholder="$t('form.description_placeholder')"
                             class="w-full px-4 py-3 rounded-xl bg-gray-900 border border-gray-800 text-white placeholder-gray-600 focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-colors resize-none"
                         ></textarea>
                     </div>
@@ -173,7 +181,7 @@ const typeIcons = {
                     >
                         <div>
                             <label for="target" class="block text-sm font-medium text-gray-400 mb-2"
-                                >Target</label
+                                >{{ $t('form.target') }}</label
                             >
                             <input
                                 id="target"
@@ -185,14 +193,14 @@ const typeIcons = {
                             />
                         </div>
                         <div v-if="form.type === 'counter'">
-                            <label for="unit" class="block text-sm font-medium text-gray-400 mb-2"
-                                >Unit</label
-                            >
+                            <label for="unit" class="block text-sm font-medium text-gray-400 mb-2">{{
+                                $t('form.unit')
+                            }}</label>
                             <input
                                 id="unit"
                                 v-model="form.unit"
                                 type="text"
-                                placeholder="books, km..."
+                                :placeholder="$t('form.unit_placeholder')"
                                 class="w-full px-4 py-3 rounded-xl bg-gray-900 border border-gray-800 text-white placeholder-gray-600 focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-colors"
                             />
                         </div>
@@ -200,7 +208,7 @@ const typeIcons = {
                             <label
                                 for="currency"
                                 class="block text-sm font-medium text-gray-400 mb-2"
-                                >Currency</label
+                                >{{ $t('form.currency') }}</label
                             >
                             <select
                                 id="currency"
@@ -221,8 +229,8 @@ const typeIcons = {
                             :disabled="form.processing"
                             class="w-full py-3 rounded-xl bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white font-medium shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                            <span v-if="form.processing">Creating...</span>
-                            <span v-else>Create Goal</span>
+                            <span v-if="form.processing">{{ $t('form.creating') }}</span>
+                            <span v-else>{{ $t('goals.create_goal') }}</span>
                         </button>
                     </div>
                 </form>

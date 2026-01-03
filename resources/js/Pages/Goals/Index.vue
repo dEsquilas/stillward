@@ -2,6 +2,9 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link, router } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 const props = defineProps({
     goals: Object,
@@ -31,7 +34,7 @@ const getProgress = (goal) => {
 };
 
 const getProgressText = (goal) => {
-    if (goal.type === 'yes_no') return goal.is_completed ? 'Done' : 'Pending';
+    if (goal.type === 'yes_no') return goal.is_completed ? t('goals.done') : t('goals.pending');
     if (goal.type === 'percentage') return `${goal.current_value}%`;
     if (goal.type === 'money') return `${goal.currency} ${goal.current_value}/${goal.target_value}`;
     return `${goal.current_value}/${goal.target_value}`;
@@ -64,7 +67,7 @@ const canQuickLog = (goal) => {
 </script>
 
 <template>
-    <Head title="Goals" />
+    <Head :title="$t('goals.title')" />
 
     <AuthenticatedLayout>
         <div class="min-h-screen px-4 py-6 sm:px-6 lg:px-8">
@@ -72,9 +75,14 @@ const canQuickLog = (goal) => {
                 <!-- Header -->
                 <div class="flex items-center justify-between mb-8">
                     <div>
-                        <h1 class="text-2xl font-bold text-white">Goals</h1>
+                        <h1 class="text-2xl font-bold text-white">{{ $t('goals.title') }}</h1>
                         <p v-if="totalGoals > 0" class="text-gray-500 text-sm mt-1">
-                            {{ completedGoals }}/{{ totalGoals }} completed
+                            {{
+                                $t('goals.completed_count', {
+                                    completed: completedGoals,
+                                    total: totalGoals,
+                                })
+                            }}
                         </p>
                     </div>
                     <Link
@@ -103,7 +111,7 @@ const canQuickLog = (goal) => {
                     class="mb-8 p-4 rounded-2xl bg-gray-900 border border-gray-800"
                 >
                     <div class="flex items-center justify-between mb-3">
-                        <span class="text-gray-400 text-sm">Overall Progress</span>
+                        <span class="text-gray-400 text-sm">{{ $t('goals.overall_progress') }}</span>
                         <span class="text-white font-bold">{{ overallProgress }}%</span>
                     </div>
                     <div class="h-2 bg-gray-800 rounded-full overflow-hidden">
@@ -133,8 +141,8 @@ const canQuickLog = (goal) => {
                             />
                         </svg>
                     </div>
-                    <h2 class="text-xl font-semibold text-white mb-2">No goals yet</h2>
-                    <p class="text-gray-500 mb-6">Start tracking your progress</p>
+                    <h2 class="text-xl font-semibold text-white mb-2">{{ $t('goals.no_goals') }}</h2>
+                    <p class="text-gray-500 mb-6">{{ $t('goals.start_tracking') }}</p>
                     <Link
                         :href="route('goals.create')"
                         class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white font-medium shadow-lg shadow-violet-500/25"
@@ -152,7 +160,7 @@ const canQuickLog = (goal) => {
                                 d="M12 4v16m8-8H4"
                             />
                         </svg>
-                        Create Goal
+                        {{ $t('goals.create_goal') }}
                     </Link>
                 </div>
 
@@ -167,7 +175,7 @@ const canQuickLog = (goal) => {
                                     :style="{ backgroundColor: category.color }"
                                 ></div>
                                 <h2 class="text-lg font-semibold text-white">
-                                    {{ category.label }}
+                                    {{ $t(`categories.${category.value}`) }}
                                 </h2>
                                 <span
                                     class="text-xs text-gray-500 bg-gray-800 px-2 py-0.5 rounded-full"
@@ -197,7 +205,7 @@ const canQuickLog = (goal) => {
                                                 v-if="getProgress(goal) >= 100"
                                                 class="text-xs px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400"
                                             >
-                                                Done
+                                                {{ $t('goals.done') }}
                                             </span>
                                         </div>
                                         <div class="flex items-center gap-3">
@@ -260,9 +268,7 @@ const canQuickLog = (goal) => {
                                             ></path>
                                         </svg>
                                         <svg
-                                            v-else-if="
-                                                goal.type === 'yes_no' && goal.is_completed
-                                            "
+                                            v-else-if="goal.type === 'yes_no' && goal.is_completed"
                                             class="w-5 h-5"
                                             fill="currentColor"
                                             viewBox="0 0 20 20"
@@ -313,7 +319,7 @@ const canQuickLog = (goal) => {
                                 d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"
                             />
                         </svg>
-                        {{ archivedCount }} archived
+                        {{ $t('goals.archived_count', { count: archivedCount }) }}
                     </Link>
                 </div>
             </div>
