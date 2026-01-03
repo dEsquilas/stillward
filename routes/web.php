@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\GoalController;
 use App\Http\Controllers\LogEntryController;
 use App\Http\Controllers\ProfileController;
@@ -13,9 +14,7 @@ Route::get('/', function () {
 });
 
 Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', function () {
-        return Inertia::render('Dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::resource('goals', GoalController::class);
     Route::post('/goals/{goal}/archive', [GoalController::class, 'archive'])->name('goals.archive');
