@@ -1,48 +1,86 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, Link, router } from '@inertiajs/vue3';
-import { computed } from 'vue';
+import { Head, Link, router, useForm } from '@inertiajs/vue3';
+import { computed, ref } from 'vue';
 
 const props = defineProps({
     goal: Object,
+    categories: Array,
 });
 
+const category = computed(
+    () => props.categories?.find((c) => c.value === props.goal.category) || {}
+);
+
 const progress = computed(() => {
-    if (props.goal.type === 'yes_no') {
-        return props.goal.is_completed ? 100 : 0;
-    }
-    if (props.goal.type === 'percentage') {
-        return parseFloat(props.goal.current_value) || 0;
-    }
-    if (props.goal.target_value > 0) {
+    if (props.goal.type === 'yes_no') return props.goal.is_completed ? 100 : 0;
+    if (props.goal.type === 'percentage') return parseFloat(props.goal.current_value) || 0;
+    if (props.goal.target_value > 0)
         return Math.min(100, (props.goal.current_value / props.goal.target_value) * 100);
-    }
     return 0;
 });
 
 const progressText = computed(() => {
-    if (props.goal.type === 'yes_no') {
+    if (props.goal.type === 'yes_no')
         return props.goal.is_completed ? 'Completed' : 'Not completed';
-    }
-    if (props.goal.type === 'percentage') {
-        return `${props.goal.current_value}%`;
-    }
-    if (props.goal.type === 'money') {
+    if (props.goal.type === 'percentage') return `${props.goal.current_value}%`;
+    if (props.goal.type === 'money')
         return `${props.goal.currency} ${props.goal.current_value} / ${props.goal.target_value}`;
-    }
     return `${props.goal.current_value} / ${props.goal.target_value} ${props.goal.unit || ''}`;
 });
 
+const isCompleted = computed(() => progress.value >= 100);
+
+// Quick Log
+const logForm = useForm({
+    value: '',
+    note: '',
+});
+
+const customValue = ref('');
+const percentageValue = ref(parseFloat(props.goal.current_value) || 0);
+const showNoteInput = ref(false);
+
+const logProgress = (value) => {
+    logForm.value = value;
+    logForm.post(route('goals.log', props.goal.id), {
+        preserveScroll: true,
+        onSuccess: () => {
+            logForm.reset();
+            customValue.value = '';
+            showNoteInput.value = false;
+        },
+    });
+};
+
+const logCustomValue = () => {
+    if (customValue.value) {
+        logProgress(parseFloat(customValue.value));
+    }
+};
+
+const toggleComplete = () => {
+    logProgress(props.goal.is_completed ? 0 : 1);
+};
+
+const updatePercentage = () => {
+    logProgress(percentageValue.value);
+};
+
 const archive = () => {
-    if (confirm('Are you sure you want to archive this goal?')) {
+    if (confirm('Archive this goal?')) {
         router.post(route('goals.archive', props.goal.id));
     }
 };
 
 const deleteGoal = () => {
-    if (confirm('Are you sure you want to delete this goal? This cannot be undone.')) {
+    if (confirm('Delete this goal? This cannot be undone.')) {
         router.delete(route('goals.destroy', props.goal.id));
     }
+};
+
+const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 };
 </script>
 
@@ -50,86 +88,296 @@ const deleteGoal = () => {
     <Head :title="goal.title" />
 
     <AuthenticatedLayout>
-        <template #header>
-            <div class="flex items-center gap-4">
-                <Link :href="route('goals.index')" class="text-gray-500 hover:text-gray-700">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-                    </svg>
-                </Link>
-                <h2 class="text-xl font-semibold leading-tight text-gray-800">
-                    {{ goal.title }}
-                </h2>
-            </div>
-        </template>
-
-        <div class="py-6">
-            <div class="mx-auto max-w-2xl px-4 sm:px-6 lg:px-8">
-                <div class="bg-white p-6 rounded-lg shadow-sm space-y-6">
-                    <div>
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-gray-500">{{ progressText }}</span>
-                            <span class="text-2xl font-bold">{{ Math.round(progress) }}%</span>
-                        </div>
-                        <div class="w-full h-3 bg-gray-100 rounded-full overflow-hidden">
+        <div class="min-h-screen px-4 py-6 sm:px-6 lg:px-8">
+            <div class="max-w-lg mx-auto">
+                <!-- Header -->
+                <div class="flex items-center gap-4 mb-6">
+                    <Link
+                        :href="route('goals.index')"
+                        class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:text-white transition-colors"
+                    >
+                        <svg
+                            class="w-5 h-5"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M15 19l-7-7 7-7"
+                            />
+                        </svg>
+                    </Link>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-2 mb-1">
                             <div
-                                class="h-full rounded-full bg-emerald-500 transition-all duration-300"
-                                :style="{ width: `${progress}%` }"
+                                class="w-2 h-2 rounded-full"
+                                :style="{ backgroundColor: category.color }"
                             ></div>
+                            <span class="text-xs text-gray-500">{{ category.label }}</span>
                         </div>
+                        <h1 class="text-xl font-bold text-white truncate">{{ goal.title }}</h1>
                     </div>
+                    <Link
+                        :href="route('goals.edit', goal.id)"
+                        class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:text-white transition-colors"
+                    >
+                        <svg
+                            class="w-5 h-5"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                            />
+                        </svg>
+                    </Link>
+                </div>
 
-                    <div v-if="goal.description" class="text-gray-600">
-                        {{ goal.description }}
+                <!-- Progress Card -->
+                <div class="p-6 rounded-2xl bg-gray-900 border border-gray-800 mb-6">
+                    <div class="text-center mb-6">
+                        <div
+                            class="text-5xl font-bold mb-2"
+                            :class="isCompleted ? 'text-emerald-400' : 'text-white'"
+                        >
+                            {{ Math.round(progress) }}%
+                        </div>
+                        <div class="text-gray-500">{{ progressText }}</div>
                     </div>
-
-                    <div class="flex flex-wrap gap-2 text-sm">
-                        <span class="px-3 py-1 bg-gray-100 rounded-full text-gray-600">
-                            {{ goal.category.replace('_', ' & ') }}
+                    <div class="h-3 bg-gray-800 rounded-full overflow-hidden">
+                        <div
+                            class="h-full rounded-full transition-all duration-500"
+                            :class="isCompleted ? 'bg-emerald-500' : ''"
+                            :style="{
+                                width: `${progress}%`,
+                                backgroundColor: isCompleted ? undefined : category.color,
+                            }"
+                        ></div>
+                    </div>
+                    <div v-if="isCompleted" class="mt-4 text-center">
+                        <span
+                            class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-medium"
+                        >
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                <path
+                                    fill-rule="evenodd"
+                                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                    clip-rule="evenodd"
+                                />
+                            </svg>
+                            Goal Completed
                         </span>
-                        <span class="px-3 py-1 bg-gray-100 rounded-full text-gray-600">
-                            {{ goal.type.replace('_', '/') }}
-                        </span>
                     </div>
+                </div>
 
-                    <div v-if="goal.log_entries?.length" class="border-t pt-6">
-                        <h3 class="font-medium text-gray-900 mb-4">Recent Activity</h3>
-                        <div class="space-y-3">
-                            <div
-                                v-for="entry in goal.log_entries"
-                                :key="entry.id"
-                                class="flex items-center justify-between text-sm"
+                <!-- Quick Log -->
+                <div class="p-4 rounded-2xl bg-gray-900 border border-gray-800 mb-6">
+                    <h2 class="text-sm font-medium text-gray-500 mb-4">Log Progress</h2>
+
+                    <!-- Counter Type -->
+                    <div v-if="goal.type === 'counter'" class="space-y-3">
+                        <div class="flex gap-2">
+                            <button
+                                @click="logProgress(-1)"
+                                :disabled="logForm.processing"
+                                class="flex-1 py-3 rounded-xl bg-gray-800 text-white font-medium hover:bg-gray-700 transition-colors disabled:opacity-50"
                             >
-                                <span class="text-gray-600">
-                                    {{ entry.note || `+${entry.value}` }}
-                                </span>
-                                <span class="text-gray-400">
-                                    {{ new Date(entry.created_at).toLocaleDateString() }}
-                                </span>
-                            </div>
+                                -1
+                            </button>
+                            <button
+                                @click="logProgress(1)"
+                                :disabled="logForm.processing"
+                                class="flex-1 py-3 rounded-xl bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white font-medium shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 transition-all disabled:opacity-50"
+                            >
+                                +1
+                            </button>
+                        </div>
+                        <div class="flex gap-2">
+                            <input
+                                v-model="customValue"
+                                type="number"
+                                placeholder="Custom value"
+                                class="flex-1 px-4 py-3 rounded-xl bg-gray-800 border border-gray-700 text-white placeholder-gray-500 focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+                            />
+                            <button
+                                @click="logCustomValue"
+                                :disabled="logForm.processing || !customValue"
+                                class="px-6 py-3 rounded-xl bg-gray-800 text-white font-medium hover:bg-gray-700 transition-colors disabled:opacity-50"
+                            >
+                                Add
+                            </button>
                         </div>
                     </div>
 
-                    <div class="flex flex-wrap gap-3 pt-6 border-t">
-                        <Link
-                            :href="route('goals.edit', goal.id)"
-                            class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition"
-                        >
-                            Edit
-                        </Link>
+                    <!-- Yes/No Type -->
+                    <div v-else-if="goal.type === 'yes_no'" class="flex justify-center">
                         <button
-                            @click="archive"
-                            class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition"
+                            @click="toggleComplete"
+                            :disabled="logForm.processing"
+                            class="w-full py-4 rounded-xl font-medium transition-all disabled:opacity-50"
+                            :class="
+                                goal.is_completed
+                                    ? 'bg-emerald-500/20 text-emerald-400 border-2 border-emerald-500'
+                                    : 'bg-gray-800 text-gray-300 hover:bg-gray-700 border-2 border-transparent'
+                            "
                         >
-                            Archive
-                        </button>
-                        <button
-                            @click="deleteGoal"
-                            class="px-4 py-2 text-red-600 hover:text-red-700 transition"
-                        >
-                            Delete
+                            <span class="flex items-center justify-center gap-2">
+                                <svg
+                                    v-if="goal.is_completed"
+                                    class="w-5 h-5"
+                                    fill="currentColor"
+                                    viewBox="0 0 20 20"
+                                >
+                                    <path
+                                        fill-rule="evenodd"
+                                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                        clip-rule="evenodd"
+                                    />
+                                </svg>
+                                {{ goal.is_completed ? 'Completed' : 'Mark as Complete' }}
+                            </span>
                         </button>
                     </div>
+
+                    <!-- Percentage Type -->
+                    <div v-else-if="goal.type === 'percentage'" class="space-y-4">
+                        <div class="flex items-center gap-4">
+                            <input
+                                v-model="percentageValue"
+                                type="range"
+                                min="0"
+                                max="100"
+                                class="flex-1 h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-violet-500"
+                            />
+                            <span class="text-white font-medium w-12 text-right"
+                                >{{ percentageValue }}%</span
+                            >
+                        </div>
+                        <button
+                            @click="updatePercentage"
+                            :disabled="logForm.processing"
+                            class="w-full py-3 rounded-xl bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white font-medium shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 transition-all disabled:opacity-50"
+                        >
+                            Update Progress
+                        </button>
+                    </div>
+
+                    <!-- Money Type -->
+                    <div v-else-if="goal.type === 'money'" class="space-y-3">
+                        <div class="flex gap-2">
+                            <span
+                                class="px-4 py-3 rounded-xl bg-gray-800 text-gray-400 font-medium"
+                            >
+                                {{ goal.currency }}
+                            </span>
+                            <input
+                                v-model="customValue"
+                                type="number"
+                                step="0.01"
+                                placeholder="Amount"
+                                class="flex-1 px-4 py-3 rounded-xl bg-gray-800 border border-gray-700 text-white placeholder-gray-500 focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+                            />
+                        </div>
+                        <div class="flex gap-2">
+                            <button
+                                @click="
+                                    customValue &&
+                                        logProgress(-Math.abs(parseFloat(customValue)))
+                                "
+                                :disabled="logForm.processing || !customValue"
+                                class="flex-1 py-3 rounded-xl bg-gray-800 text-white font-medium hover:bg-gray-700 transition-colors disabled:opacity-50"
+                            >
+                                - Subtract
+                            </button>
+                            <button
+                                @click="
+                                    customValue && logProgress(Math.abs(parseFloat(customValue)))
+                                "
+                                :disabled="logForm.processing || !customValue"
+                                class="flex-1 py-3 rounded-xl bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white font-medium shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 transition-all disabled:opacity-50"
+                            >
+                                + Add
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <div
+                    v-if="goal.description"
+                    class="p-4 rounded-xl bg-gray-900 border border-gray-800 mb-6"
+                >
+                    <p class="text-gray-400 whitespace-pre-wrap">{{ goal.description }}</p>
+                </div>
+
+                <!-- Activity -->
+                <div v-if="goal.log_entries?.length" class="mb-6">
+                    <h2 class="text-sm font-medium text-gray-500 mb-3">Recent Activity</h2>
+                    <div class="space-y-2">
+                        <div
+                            v-for="entry in goal.log_entries.slice(0, 5)"
+                            :key="entry.id"
+                            class="flex items-center justify-between p-3 rounded-xl bg-gray-900 border border-gray-800"
+                        >
+                            <span class="text-gray-300">{{
+                                entry.note ||
+                                (parseFloat(entry.value) >= 0
+                                    ? `+${entry.value}`
+                                    : `${entry.value}`)
+                            }}</span>
+                            <span class="text-xs text-gray-600">{{
+                                formatDate(entry.created_at)
+                            }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="flex gap-3">
+                    <button
+                        @click="archive"
+                        class="flex-1 py-3 rounded-xl bg-gray-800 text-gray-300 font-medium hover:bg-gray-700 transition-colors flex items-center justify-center gap-2"
+                    >
+                        <svg
+                            class="w-4 h-4"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"
+                            />
+                        </svg>
+                        Archive
+                    </button>
+                    <button
+                        @click="deleteGoal"
+                        class="py-3 px-4 rounded-xl text-red-400 hover:bg-red-500/10 transition-colors"
+                    >
+                        <svg
+                            class="w-5 h-5"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                            />
+                        </svg>
+                    </button>
                 </div>
             </div>
         </div>
