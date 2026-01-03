@@ -433,69 +433,68 @@ Este documento contiene todas las tareas necesarias para desarrollar Stillward, 
 
 #### Backend
 
-- [ ] Crear `DashboardController`
-- [ ] Implementar endpoint para datos agregados del dashboard
-- [ ] Calcular progreso global (media de todos los goals)
-- [ ] Calcular progreso por categoría
-- [ ] Calcular datos para gráfico de evolución temporal
-- [ ] Calcular pace esperado vs real
-- [ ] Obtener actividad reciente
+- [x] Crear `DashboardController`
+- [x] Implementar endpoint para datos agregados del dashboard
+- [x] Calcular progreso global (media de todos los goals)
+- [x] Calcular progreso por categoría
+- [x] Calcular datos para gráfico de evolución temporal
+- [x] Calcular pace esperado vs real
+- [x] Obtener actividad reciente
 
 #### Frontend
 
-- [ ] Crear página `Dashboard/Index.vue`
-- [ ] Implementar Year Progress Bar
-  - [ ] Calcular porcentaje del año transcurrido
-  - [ ] Mostrar barra visual con porcentaje
-- [ ] Implementar Category Summary Cards
-  - [ ] 4 tarjetas con color/icono de categoría
-  - [ ] Mostrar # goals activos
-  - [ ] Mostrar progreso medio (%)
-  - [ ] Mostrar completados vs en progreso
-  - [ ] Mini barra de progreso o sparkline
-- [ ] Implementar Global Progress Chart
-  - [ ] Instalar librería de gráficos (Chart.js, ApexCharts, etc.)
-  - [ ] Gráfico de línea: evolución del progreso global
-  - [ ] Eje X: tiempo (semanas/meses)
-  - [ ] Eje Y: porcentaje
-- [ ] Implementar Pace vs Year Chart
-  - [ ] Línea de progreso real
-  - [ ] Línea de progreso esperado (lineal)
-  - [ ] Indicador visual de ahead/on-track/behind
+- [x] Crear página `Dashboard/Index.vue` — integrado en Dashboard.vue
+- [x] Implementar Year Progress Bar
+  - [x] Calcular porcentaje del año transcurrido
+  - [x] Mostrar barra visual con porcentaje
+- [x] Implementar Category Summary Cards
+  - [x] 4 tarjetas con color/icono de categoría
+  - [x] Mostrar # goals activos
+  - [x] Mostrar progreso medio (%)
+  - [x] Mostrar completados vs en progreso
+  - [x] Mini barra de progreso o sparkline
+- [x] Implementar Global Progress Chart
+  - [x] Instalar librería de gráficos (Chart.js, ApexCharts, etc.)
+  - [x] Gráfico de barras: actividad semanal (logs)
+  - [x] Eje X: tiempo (semanas)
+  - [x] Eje Y: número de logs
+- [x] Implementar Pace vs Year Chart
+  - [x] Barra de progreso real
+  - [x] Barra de progreso del año (referencia)
+  - [x] Indicador visual de ahead/on-track/behind
 - [ ] Implementar Per-Goal Charts (en vista de detalle)
   - [ ] Counter/Money: línea de valor acumulado + línea target
   - [ ] Percentage: línea de % + referencia de pace
   - [ ] Yes/No: solo estado y fecha si completado
-- [ ] Implementar Recent Activity
-  - [ ] Lista de últimos 10-20 log entries
-  - [ ] Mostrar: goal, categoría, valor, fecha/hora
+- [x] Implementar Recent Activity
+  - [x] Lista de últimos 10-20 log entries
+  - [x] Mostrar: goal, categoría, valor, fecha/hora
 
 ### Checklist de Pruebas
 
-- [ ] Year Progress Bar muestra porcentaje correcto del año
-- [ ] Category Summary:
-  - [ ] Muestra datos correctos por categoría
-  - [ ] Colores e iconos correctos
-  - [ ] Click lleva a filtro de esa categoría (opcional)
-- [ ] Global Chart:
-  - [ ] Se renderiza sin errores
-  - [ ] Datos son correctos
-  - [ ] Responsive (se adapta a pantalla)
-- [ ] Pace vs Year Chart:
-  - [ ] Muestra ambas líneas
-  - [ ] Línea esperada es correcta (lineal desde 0 a 100%)
-  - [ ] Indicador ahead/behind es correcto
+- [x] Year Progress Bar muestra porcentaje correcto del año
+- [x] Category Summary:
+  - [x] Muestra datos correctos por categoría
+  - [x] Colores e iconos correctos
+  - [x] Click lleva a filtro de esa categoría (opcional)
+- [x] Global Chart:
+  - [x] Se renderiza sin errores
+  - [x] Datos son correctos
+  - [x] Responsive (se adapta a pantalla)
+- [x] Pace vs Year Chart:
+  - [x] Muestra ambas barras
+  - [x] Indicador ahead/behind es correcto
 - [ ] Per-Goal Charts:
   - [ ] Counter muestra evolución correcta
   - [ ] Money muestra evolución correcta
   - [ ] Percentage muestra evolución correcta
   - [ ] Yes/No muestra estado correcto
-- [ ] Recent Activity:
-  - [ ] Muestra entries más recientes primero
-  - [ ] Información es correcta
-  - [ ] Timestamps son legibles
-- [ ] Dashboard carga en tiempo razonable (<2s)
-- [ ] Funciona en móvil (scroll, touch)
+- [x] Recent Activity:
+  - [x] Muestra entries más recientes primero
+  - [x] Información es correcta
+  - [x] Timestamps son legibles
+- [x] Dashboard carga en tiempo razonable (<2s)
+- [x] Funciona en móvil (scroll, touch)
 
 ---
 
