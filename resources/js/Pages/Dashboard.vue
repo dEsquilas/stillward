@@ -1,7 +1,8 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
-import { computed, onMounted, ref } from 'vue';
+import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { Bar } from 'vue-chartjs';
 import {
     Chart as ChartJS,
@@ -14,6 +15,8 @@ import {
 } from 'chart.js';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+
+const { t } = useI18n();
 
 const props = defineProps({
     stats: Object,
@@ -80,23 +83,29 @@ const formatDate = (dateString) => {
     const hours = Math.floor(diff / 3600000);
     const days = Math.floor(diff / 86400000);
 
-    if (minutes < 1) return 'Just now';
-    if (minutes < 60) return `${minutes}m ago`;
-    if (hours < 24) return `${hours}h ago`;
-    if (days < 7) return `${days}d ago`;
+    if (minutes < 1) return t('time.just_now');
+    if (minutes < 60) return t('time.minutes_ago', { count: minutes });
+    if (hours < 24) return t('time.hours_ago', { count: hours });
+    if (days < 7) return t('time.days_ago', { count: days });
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 };
 
 const paceStatus = computed(() => {
     const diff = props.stats.avgProgress - props.stats.yearProgress;
-    if (diff >= 5) return { label: 'Ahead', color: 'text-emerald-400', bg: 'bg-emerald-500/20' };
-    if (diff >= -5) return { label: 'On track', color: 'text-yellow-400', bg: 'bg-yellow-500/20' };
-    return { label: 'Behind', color: 'text-red-400', bg: 'bg-red-500/20' };
+    if (diff >= 5)
+        return {
+            label: t('dashboard.ahead'),
+            color: 'text-emerald-400',
+            bg: 'bg-emerald-500/20',
+        };
+    if (diff >= -5)
+        return { label: t('dashboard.on_track'), color: 'text-yellow-400', bg: 'bg-yellow-500/20' };
+    return { label: t('dashboard.behind'), color: 'text-red-400', bg: 'bg-red-500/20' };
 });
 </script>
 
 <template>
-    <Head title="Dashboard" />
+    <Head :title="$t('nav.dashboard')" />
 
     <AuthenticatedLayout>
         <div class="min-h-screen px-4 py-6 sm:px-6 lg:px-8">
@@ -104,9 +113,11 @@ const paceStatus = computed(() => {
                 <!-- Header -->
                 <div class="mb-8">
                     <h1 class="text-2xl font-bold text-white">
-                        Welcome back, {{ $page.props.auth.user.name.split(' ')[0] }}
+                        {{
+                            $t('welcome_back', { name: $page.props.auth.user.name.split(' ')[0] })
+                        }}
                     </h1>
-                    <p class="text-gray-500 mt-1">Here's your progress overview</p>
+                    <p class="text-gray-500 mt-1">{{ $t('progress_overview') }}</p>
                 </div>
 
                 <!-- Year Progress & Pace -->
@@ -114,7 +125,9 @@ const paceStatus = computed(() => {
                     <!-- Year Progress -->
                     <div class="p-5 rounded-2xl bg-gray-900 border border-gray-800">
                         <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-gray-400">Year Progress</span>
+                            <span class="text-sm text-gray-400">{{
+                                $t('dashboard.year_progress')
+                            }}</span>
                             <span class="text-lg font-bold text-white"
                                 >{{ stats.yearProgress }}%</span
                             >
@@ -130,7 +143,9 @@ const paceStatus = computed(() => {
                     <!-- Your Progress -->
                     <div class="p-5 rounded-2xl bg-gray-900 border border-gray-800">
                         <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-gray-400">Your Progress</span>
+                            <span class="text-sm text-gray-400">{{
+                                $t('dashboard.your_progress')
+                            }}</span>
                             <div class="flex items-center gap-2">
                                 <span class="text-lg font-bold text-white"
                                     >{{ stats.avgProgress }}%</span
@@ -156,19 +171,21 @@ const paceStatus = computed(() => {
                 <div class="grid grid-cols-2 gap-4 mb-6">
                     <div class="p-5 rounded-2xl bg-gray-900 border border-gray-800 text-center">
                         <div class="text-3xl font-bold text-white mb-1">{{ stats.totalGoals }}</div>
-                        <div class="text-sm text-gray-500">Active Goals</div>
+                        <div class="text-sm text-gray-500">{{ $t('dashboard.active_goals') }}</div>
                     </div>
                     <div class="p-5 rounded-2xl bg-gray-900 border border-gray-800 text-center">
                         <div class="text-3xl font-bold text-emerald-400 mb-1">
                             {{ stats.completedGoals }}
                         </div>
-                        <div class="text-sm text-gray-500">Completed</div>
+                        <div class="text-sm text-gray-500">{{ $t('dashboard.completed') }}</div>
                     </div>
                 </div>
 
                 <!-- Category Stats -->
                 <div v-if="categoryStats.length > 0" class="mb-6">
-                    <h2 class="text-sm font-medium text-gray-500 mb-3">By Category</h2>
+                    <h2 class="text-sm font-medium text-gray-500 mb-3">
+                        {{ $t('dashboard.by_category') }}
+                    </h2>
                     <div class="grid gap-3 sm:grid-cols-2">
                         <Link
                             v-for="cat in categoryStats"
@@ -181,7 +198,9 @@ const paceStatus = computed(() => {
                                     class="w-3 h-3 rounded-full"
                                     :style="{ backgroundColor: cat.color }"
                                 ></div>
-                                <span class="font-medium text-white">{{ cat.label }}</span>
+                                <span class="font-medium text-white">{{
+                                    $t(`categories.${cat.value}`)
+                                }}</span>
                                 <span class="text-xs text-gray-500 ml-auto"
                                     >{{ cat.completed }}/{{ cat.count }}</span
                                 >
@@ -204,7 +223,9 @@ const paceStatus = computed(() => {
 
                 <!-- Activity Chart -->
                 <div v-if="weeklyProgress.length > 0" class="mb-6">
-                    <h2 class="text-sm font-medium text-gray-500 mb-3">Activity (Last 8 weeks)</h2>
+                    <h2 class="text-sm font-medium text-gray-500 mb-3">
+                        {{ $t('dashboard.activity_weeks') }}
+                    </h2>
                     <div class="p-4 rounded-2xl bg-gray-900 border border-gray-800">
                         <div class="h-48">
                             <Bar :data="chartData" :options="chartOptions" />
@@ -214,7 +235,9 @@ const paceStatus = computed(() => {
 
                 <!-- Recent Activity -->
                 <div v-if="recentActivity.length > 0" class="mb-6">
-                    <h2 class="text-sm font-medium text-gray-500 mb-3">Recent Activity</h2>
+                    <h2 class="text-sm font-medium text-gray-500 mb-3">
+                        {{ $t('dashboard.recent_activity') }}
+                    </h2>
                     <div class="space-y-2">
                         <Link
                             v-for="entry in recentActivity"
@@ -236,8 +259,7 @@ const paceStatus = computed(() => {
                                 }}</span>
                             </div>
                             <span class="text-sm text-gray-400 shrink-0">
-                                {{ parseFloat(entry.value) >= 0 ? '+' : ''
-                                }}{{ entry.value }}
+                                {{ parseFloat(entry.value) >= 0 ? '+' : '' }}{{ entry.value }}
                             </span>
                             <span class="text-xs text-gray-600 shrink-0">{{
                                 formatDate(entry.created_at)
@@ -268,8 +290,10 @@ const paceStatus = computed(() => {
                             />
                         </svg>
                     </div>
-                    <h2 class="text-xl font-semibold text-white mb-2">No goals yet</h2>
-                    <p class="text-gray-500 mb-6">Create your first goal to start tracking</p>
+                    <h2 class="text-xl font-semibold text-white mb-2">
+                        {{ $t('dashboard.no_goals_yet') }}
+                    </h2>
+                    <p class="text-gray-500 mb-6">{{ $t('dashboard.create_first_goal') }}</p>
                     <Link
                         :href="route('goals.create')"
                         class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white font-medium shadow-lg shadow-violet-500/25"
@@ -287,7 +311,7 @@ const paceStatus = computed(() => {
                                 d="M12 4v16m8-8H4"
                             />
                         </svg>
-                        Create Goal
+                        {{ $t('goals.create_goal') }}
                     </Link>
                 </div>
 
@@ -315,8 +339,10 @@ const paceStatus = computed(() => {
                             </svg>
                         </div>
                         <div>
-                            <div class="font-medium text-white">View Goals</div>
-                            <div class="text-sm text-gray-500">Manage your goals</div>
+                            <div class="font-medium text-white">{{ $t('dashboard.view_goals') }}</div>
+                            <div class="text-sm text-gray-500">
+                                {{ $t('dashboard.manage_goals') }}
+                            </div>
                         </div>
                     </Link>
 
@@ -342,8 +368,10 @@ const paceStatus = computed(() => {
                             </svg>
                         </div>
                         <div>
-                            <div class="font-medium text-white">New Goal</div>
-                            <div class="text-sm text-gray-500">Create a new goal</div>
+                            <div class="font-medium text-white">{{ $t('dashboard.new_goal') }}</div>
+                            <div class="text-sm text-gray-500">
+                                {{ $t('dashboard.create_new_goal') }}
+                            </div>
                         </div>
                     </Link>
                 </div>
