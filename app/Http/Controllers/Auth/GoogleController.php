@@ -18,14 +18,25 @@ class GoogleController extends Controller
     {
         $googleUser = Socialite::driver('google')->user();
 
-        $user = User::updateOrCreate(
-            ['google_id' => $googleUser->getId()],
-            [
+        $user = User::where('google_id', $googleUser->getId())
+            ->orWhere('email', $googleUser->getEmail())
+            ->first();
+
+        if ($user) {
+            $user->update([
+                'google_id' => $googleUser->getId(),
                 'name' => $googleUser->getName(),
                 'email' => $googleUser->getEmail(),
                 'avatar' => $googleUser->getAvatar(),
-            ]
-        );
+            ]);
+        } else {
+            $user = User::create([
+                'google_id' => $googleUser->getId(),
+                'name' => $googleUser->getName(),
+                'email' => $googleUser->getEmail(),
+                'avatar' => $googleUser->getAvatar(),
+            ]);
+        }
 
         Auth::login($user, remember: true);
 
