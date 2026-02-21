@@ -36,6 +36,8 @@ const formatNumber = (value) => {
     return Number.isInteger(num) ? num.toLocaleString('es-ES') : num.toLocaleString('es-ES', { maximumFractionDigits: 2 });
 };
 
+const useDelta = computed(() => props.goal.type === 'counter');
+
 const progressText = computed(() => {
     if (props.goal.type === 'yes_no')
         return props.goal.is_completed ? t('detail.completed') : t('goals.not_completed');
@@ -46,7 +48,8 @@ const progressText = computed(() => {
     const current = parseFloat(props.goal.current_value) || 0;
     const target = parseFloat(props.goal.target_value) || 0;
     const unit = props.goal.unit ? ` ${props.goal.unit}` : '';
-    return `${formatNumber(current - initial)} / ${formatNumber(target - initial)}${unit}`;
+    if (useDelta.value) return `${formatNumber(current - initial)} / ${formatNumber(target - initial)}${unit}`;
+    return `${formatNumber(current)} / ${formatNumber(target)}${unit}`;
 });
 
 const isCompleted = computed(() => progress.value >= 100);
@@ -60,7 +63,8 @@ const targetText = computed(() => {
     const target = parseFloat(props.goal.target_value) || 0;
     if (props.goal.type === 'money') return `${props.goal.currency} ${formatNumber(target)}`;
     const unit = props.goal.unit ? ` ${props.goal.unit}` : '';
-    return `${formatNumber(target - initial)}${unit}`;
+    if (useDelta.value) return `${formatNumber(target - initial)}${unit}`;
+    return `${formatNumber(target)}${unit}`;
 });
 
 // Quick Log

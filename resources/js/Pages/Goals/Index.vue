@@ -53,24 +53,31 @@ const hasNumericTarget = (goal) => {
     return ['counter', 'number', 'money'].includes(goal.type) && parseFloat(goal.target_value) > 0;
 };
 
+const isDecreasing = (goal) => {
+    return parseFloat(goal.target_value) < parseFloat(goal.initial_value);
+};
+
+const useDelta = (goal) => {
+    return goal.type === 'counter';
+};
+
 const getFractionText = (goal) => {
     const initial = parseFloat(goal.initial_value) || 0;
     const current = parseFloat(goal.current_value) || 0;
     const target = parseFloat(goal.target_value) || 0;
-    const done = current - initial;
-    const range = target - initial;
     if (goal.type === 'money') return `${goal.currency} ${formatNumber(current)}/${formatNumber(target)}`;
     const unit = goal.unit ? ` ${goal.unit}` : '';
-    return `${formatNumber(done)}/${formatNumber(range)}${unit}`;
+    if (useDelta(goal)) return `${formatNumber(current - initial)}/${formatNumber(target - initial)}${unit}`;
+    return `${formatNumber(current)}/${formatNumber(target)}${unit}`;
 };
 
 const getTargetText = (goal) => {
     const initial = parseFloat(goal.initial_value) || 0;
     const target = parseFloat(goal.target_value) || 0;
-    const range = target - initial;
     if (goal.type === 'money') return `${goal.currency} ${formatNumber(target)}`;
     const unit = goal.unit ? ` ${goal.unit}` : '';
-    return `${formatNumber(range)}${unit}`;
+    if (useDelta(goal)) return `${formatNumber(target - initial)}${unit}`;
+    return `${formatNumber(target)}${unit}`;
 };
 
 const getProgressText = (goal) => {
@@ -246,7 +253,7 @@ const canQuickLog = (goal) => {
                                                     v-if="hasNumericTarget(goal) && parseFloat(goal.initial_value)"
                                                     class="text-[10px] text-gray-600 tabular-nums shrink-0"
                                                 >
-                                                    ({{ formatNumber(goal.initial_value) }} {{ goal.unit || '' }})
+                                                    ({{ goal.type === 'money' ? `${goal.currency} ${formatNumber(goal.initial_value)}` : `${formatNumber(goal.initial_value)} ${goal.unit || ''}` }})
                                                 </span>
                                             </div>
                                             <span
