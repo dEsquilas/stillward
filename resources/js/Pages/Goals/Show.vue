@@ -31,18 +31,37 @@ const progress = computed(() => {
     return 0;
 });
 
+const formatNumber = (value) => {
+    const num = parseFloat(value) || 0;
+    return Number.isInteger(num) ? num.toLocaleString('es-ES') : num.toLocaleString('es-ES', { maximumFractionDigits: 2 });
+};
+
 const progressText = computed(() => {
     if (props.goal.type === 'yes_no')
         return props.goal.is_completed ? t('detail.completed') : t('goals.not_completed');
     if (props.goal.type === 'percentage') return `${props.goal.current_value}%`;
     if (props.goal.type === 'money')
-        return `${props.goal.currency} ${props.goal.current_value} / ${props.goal.target_value}`;
-    if (props.goal.type === 'number')
-        return `${props.goal.current_value} / ${props.goal.target_value} ${props.goal.unit || ''}`;
-    return `${props.goal.current_value} / ${props.goal.target_value} ${props.goal.unit || ''}`;
+        return `${props.goal.currency} ${formatNumber(props.goal.current_value)} / ${formatNumber(props.goal.target_value)}`;
+    const initial = parseFloat(props.goal.initial_value) || 0;
+    const current = parseFloat(props.goal.current_value) || 0;
+    const target = parseFloat(props.goal.target_value) || 0;
+    const unit = props.goal.unit ? ` ${props.goal.unit}` : '';
+    return `${formatNumber(current - initial)} / ${formatNumber(target - initial)}${unit}`;
 });
 
 const isCompleted = computed(() => progress.value >= 100);
+
+const hasNumericTarget = computed(() => {
+    return ['counter', 'number', 'money'].includes(props.goal.type) && parseFloat(props.goal.target_value) > 0;
+});
+
+const targetText = computed(() => {
+    const initial = parseFloat(props.goal.initial_value) || 0;
+    const target = parseFloat(props.goal.target_value) || 0;
+    if (props.goal.type === 'money') return `${props.goal.currency} ${formatNumber(target)}`;
+    const unit = props.goal.unit ? ` ${props.goal.unit}` : '';
+    return `${formatNumber(target - initial)}${unit}`;
+});
 
 // Quick Log
 const logForm = useForm({
@@ -189,6 +208,12 @@ const formatDate = (dateString) => {
                                 backgroundColor: isCompleted ? undefined : category.color,
                             }"
                         ></div>
+                    </div>
+                    <div
+                        v-if="hasNumericTarget"
+                        class="flex justify-end mt-1.5"
+                    >
+                        <span class="text-xs text-gray-600 tabular-nums">{{ targetText }}</span>
                     </div>
                     <div v-if="isCompleted" class="mt-4 text-center">
                         <span

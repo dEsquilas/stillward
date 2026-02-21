@@ -44,17 +44,39 @@ const getProgress = (goal) => {
     return Math.min(100, Math.max(0, progress));
 };
 
+const formatNumber = (value) => {
+    const num = parseFloat(value) || 0;
+    return Number.isInteger(num) ? num.toLocaleString('es-ES') : num.toLocaleString('es-ES', { maximumFractionDigits: 2 });
+};
+
+const hasNumericTarget = (goal) => {
+    return ['counter', 'number', 'money'].includes(goal.type) && parseFloat(goal.target_value) > 0;
+};
+
+const getFractionText = (goal) => {
+    const initial = parseFloat(goal.initial_value) || 0;
+    const current = parseFloat(goal.current_value) || 0;
+    const target = parseFloat(goal.target_value) || 0;
+    const done = current - initial;
+    const range = target - initial;
+    if (goal.type === 'money') return `${goal.currency} ${formatNumber(current)}/${formatNumber(target)}`;
+    const unit = goal.unit ? ` ${goal.unit}` : '';
+    return `${formatNumber(done)}/${formatNumber(range)}${unit}`;
+};
+
+const getTargetText = (goal) => {
+    const initial = parseFloat(goal.initial_value) || 0;
+    const target = parseFloat(goal.target_value) || 0;
+    const range = target - initial;
+    if (goal.type === 'money') return `${goal.currency} ${formatNumber(target)}`;
+    const unit = goal.unit ? ` ${goal.unit}` : '';
+    return `${formatNumber(range)}${unit}`;
+};
+
 const getProgressText = (goal) => {
     if (goal.type === 'yes_no') return goal.is_completed ? t('goals.done') : t('goals.pending');
     if (goal.type === 'percentage') return `${goal.current_value}%`;
-    if (goal.type === 'money') return `${goal.currency} ${goal.current_value}/${goal.target_value}`;
-
-    // For number/counter with initial value, show current → target
-    const current = parseFloat(goal.current_value) || 0;
-    const target = parseFloat(goal.target_value) || 0;
-    const unit = goal.unit ? ` ${goal.unit}` : '';
-
-    return `${current}${unit} → ${target}${unit}`;
+    return getCurrentText(goal);
 };
 
 const quickLog = (goal, e) => {
@@ -214,21 +236,41 @@ const canQuickLog = (goal) => {
                                         class="flex-1 p-4 rounded-xl bg-gray-900 border border-gray-800 hover:border-gray-700 transition-colors group"
                                     >
                                         <div class="flex items-center justify-between mb-3">
-                                            <h3
-                                                class="font-medium text-white group-hover:text-violet-400 transition-colors line-clamp-1"
-                                            >
-                                                {{ goal.title }}
-                                            </h3>
+                                            <div class="flex items-baseline gap-2 min-w-0">
+                                                <h3
+                                                    class="font-medium text-white group-hover:text-violet-400 transition-colors line-clamp-1"
+                                                >
+                                                    {{ goal.title }}
+                                                </h3>
+                                                <span
+                                                    v-if="hasNumericTarget(goal) && parseFloat(goal.initial_value)"
+                                                    class="text-[10px] text-gray-600 tabular-nums shrink-0"
+                                                >
+                                                    ({{ formatNumber(goal.initial_value) }} {{ goal.unit || '' }})
+                                                </span>
+                                            </div>
                                             <span
                                                 v-if="getProgress(goal) >= 100"
                                                 class="text-xs px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400"
                                             >
                                                 {{ $t('goals.done') }}
                                             </span>
+                                            <span
+                                                v-else-if="hasNumericTarget(goal)"
+                                                class="text-xs text-gray-500 tabular-nums shrink-0"
+                                            >
+                                                {{ getFractionText(goal) }}
+                                            </span>
+                                            <span
+                                                v-else
+                                                class="text-xs text-gray-500 tabular-nums shrink-0"
+                                            >
+                                                {{ getProgressText(goal) }}
+                                            </span>
                                         </div>
-                                        <div class="flex items-center gap-3">
+                                        <div>
                                             <div
-                                                class="flex-1 h-1.5 bg-gray-800 rounded-full overflow-hidden"
+                                                class="h-1.5 bg-gray-800 rounded-full overflow-hidden"
                                             >
                                                 <div
                                                     class="h-full rounded-full transition-all duration-300"
@@ -246,11 +288,12 @@ const canQuickLog = (goal) => {
                                                     }"
                                                 ></div>
                                             </div>
-                                            <span
-                                                class="text-xs text-gray-500 tabular-nums min-w-[60px] text-right"
+                                            <div
+                                                v-if="hasNumericTarget(goal)"
+                                                class="flex justify-end mt-1"
                                             >
-                                                {{ getProgressText(goal) }}
-                                            </span>
+                                                <span class="text-[10px] text-gray-600 tabular-nums">{{ getTargetText(goal) }}</span>
+                                            </div>
                                         </div>
                                     </Link>
                                     <!-- Quick Log Button -->
