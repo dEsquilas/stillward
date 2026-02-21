@@ -15,7 +15,10 @@ class DatabaseSeeder extends Seeder
 
     public function run(): void
     {
-        $user = User::where('email', 'desquilas@gmail.com')->firstOrFail();
+        $user = User::firstOrCreate(
+            ['email' => 'desquilas@gmail.com'],
+            ['name' => 'Dani', 'password' => bcrypt('password')],
+        );
 
         $this->seedGoals($user);
     }
