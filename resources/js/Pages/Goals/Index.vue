@@ -22,8 +22,10 @@ const completedGoals = computed(
             .filter((g) => g.is_completed).length
 );
 const overallProgress = computed(() => {
-    if (totalGoals.value === 0) return 0;
-    return Math.round((completedGoals.value / totalGoals.value) * 100);
+    const allGoals = Object.values(props.goals).flat();
+    if (allGoals.length === 0) return 0;
+    const sum = allGoals.reduce((acc, goal) => acc + Math.min(100, getProgress(goal)), 0);
+    return Math.round(sum / allGoals.length);
 });
 
 const getProgress = (goal) => {
