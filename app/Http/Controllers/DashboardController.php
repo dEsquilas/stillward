@@ -92,10 +92,7 @@ class DashboardController extends Controller
     private function calculateProgress($goal): float
     {
         return match ($goal->type->value) {
-            'counter', 'number' => $this->calculateNumberProgress($goal),
-            'money' => $goal->target_value > 0
-                ? min(100, ($goal->current_value / $goal->target_value) * 100)
-                : 0,
+            'counter', 'number', 'money' => $this->calculateNumberProgress($goal),
             'yes_no' => $goal->is_completed ? 100 : 0,
             'percentage' => (float) $goal->current_value,
             default => 0,
